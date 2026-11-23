@@ -57,6 +57,15 @@ DIM_RATIO = {
     "age": {"18-24": 0.18, "25-29": 0.24, "30-39": 0.28, "40-49": 0.18, "50+": 0.12},
 }
 
+CHANNELS = [
+    ("douyin", "抖音", "cpm"),
+    ("wechat", "微信朋友圈", "cpm"),
+    ("xiaohongshu", "小红书", "cpc"),
+    ("kuaishou", "快手", "cpm"),
+    ("baidu", "百度", "cpc"),
+    ("other", "其他", "cpm"),
+]
+
 VENDORS = [
     ("V-DY-001", "巨量引擎苏州中心", "douyin", "周明", "13800006210"),
     ("V-WX-002", "腾讯广告华东", "wechat", "吴倩", "13900003382"),
@@ -136,6 +145,18 @@ def ensure_project() -> dict:
     print("创建项目:", st, res.get("message"))
     status, payload = call("GET", "/projects")
     return payload["data"][0]
+
+
+def ensure_channels() -> None:
+    status, payload = call("GET", "/channels?page=1&pageSize=100")
+    existing = {item["code"] for item in (payload.get("data") or {}).get("items", [])}
+    for code, name, bid_type in CHANNELS:
+        if code in existing:
+            continue
+        st, res = call("POST", "/channels", {
+            "code": code, "name": name, "bidType": bid_type, "status": 1,
+        })
+        print("创建渠道", code, st, res.get("message"))
 
 
 def ensure_vendors() -> dict[str, dict]:
@@ -228,6 +249,7 @@ def main() -> None:
     print("登录成功:", payload["data"]["user"]["displayName"])
 
     ensure_user()
+    ensure_channels()
     project = ensure_project()
     vendors = ensure_vendors()
     campaigns = ensure_campaigns(project, vendors)

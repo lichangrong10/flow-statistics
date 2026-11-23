@@ -67,7 +67,20 @@
       <div class="form-wrap">
         <div class="form-head">
           <div class="welcome">欢迎登录</div>
-          <div class="welcome-sub">请使用平台分配的账号进入数据工作台</div>
+          <div class="welcome-sub">{{ roleSubtitle }}</div>
+        </div>
+
+        <div class="role-switch">
+          <button
+            v-for="item in roleTabs"
+            :key="item.value"
+            type="button"
+            class="role-item"
+            :class="{ active: role === item.value }"
+            @click="switchRole(item.value)"
+          >
+            {{ item.label }}
+          </button>
         </div>
 
         <el-form class="login-form" @submit.prevent="onSubmit">
@@ -146,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Hide, Lock, User, View, WarningFilled } from '@element-plus/icons-vue'
@@ -166,15 +179,43 @@ const loading = ref(false)
 const showPassword = ref(false)
 const errorText = ref('')
 
+type LoginRole = 'admin' | 'user'
+
+const role = ref<LoginRole>('admin')
+
+const roleTabs: { value: LoginRole; label: string }[] = [
+  { value: 'admin', label: '管理员登录' },
+  { value: 'user', label: '普通用户登录' },
+]
+
+const roleSubtitle = computed(() =>
+  role.value === 'admin'
+    ? '管理员可进入系统管理，维护用户、厂商、模拟参数、字典与操作日志'
+    : '请使用平台分配的账号进入数据工作台',
+)
+
 const form = reactive({
   username: 'root',
   password: 'root',
 })
 
-const demoAccounts = [
-  { username: 'root', password: 'root', label: '管理员' },
-  { username: 'operator', password: '123456', label: '普通用户' },
-]
+const demoAccounts = computed(() =>
+  role.value === 'admin'
+    ? [{ username: 'root', password: 'root', label: '管理员' }]
+    : [{ username: 'operator', password: '123456', label: '普通用户' }],
+)
+
+function switchRole(value: LoginRole) {
+  role.value = value
+  errorText.value = ''
+  if (value === 'admin') {
+    form.username = 'root'
+    form.password = 'root'
+  } else {
+    form.username = 'operator'
+    form.password = '123456'
+  }
+}
 
 function fillDemo(username: string, password: string) {
   form.username = username
@@ -191,11 +232,17 @@ async function onSubmit() {
   }
   loading.value = true
   try {
-    await user.login(form.username.trim(), form.password)
+    const result = await user.login(form.username.trim(), form.password)
+    if (role.value === 'admin' && result.user.role !== 'admin') {
+      await user.logout()
+      errorText.value = '该账号不是管理员，请切换到「普通用户登录」'
+      return
+    }
     await Promise.allSettled([dict.load(), app.loadProjects()])
     ElMessage.success(`欢迎回来，${user.displayName}`)
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-    await router.replace(redirect || '/dashboard')
+    const fallback = role.value === 'admin' ? '/admin' : '/dashboard'
+    await router.replace(redirect || fallback)
   } catch (error) {
     errorText.value = (error as Error).message || '登录失败，请稍后重试'
   } finally {
@@ -392,6 +439,35 @@ async function onSubmit() {
   margin: -4px 0 14px;
   font-size: 12.5px;
   color: var(--color-danger);
+}
+.role-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 22px;
+  background: #f2f5f9;
+  border-radius: 10px;
+}
+.role-item {
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.role-item.active {
+  background: #fff;
+  color: var(--color-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(23, 65, 107, 0.14);
+}
+.role-item:hover:not(.active) {
+  color: var(--color-primary);
 }
 .submit-btn {
   width: 100%;

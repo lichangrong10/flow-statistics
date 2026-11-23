@@ -124,6 +124,7 @@ import {
   FolderOpened,
   List,
   PieChart,
+  Setting,
 } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { useAppStore } from '@/stores/app'
@@ -154,19 +155,25 @@ const pageTitle = computed(() => (route.meta.title as string) ?? '工作台')
 const activeMenu = computed(() => (route.meta.activeMenu as string) ?? (route.name as string))
 const initial = computed(() => (user.displayName || 'U').slice(0, 1))
 
-const menus = computed(() => [
-  { key: 'dashboard', path: '/dashboard', label: '工作台', icon: DataBoard, badge: 0 },
-  {
-    key: 'campaign',
-    path: '/campaign',
-    label: '投放计划',
-    icon: List,
-    badge: pendingCount.value,
-  },
-  { key: 'stats', path: '/stats', label: '数据回收', icon: DataAnalysis, badge: 0 },
-  { key: 'board', path: '/board', label: '数据看板', icon: PieChart, badge: 0 },
-  { key: 'report', path: '/report', label: '报表中心', icon: Files, badge: 0 },
-])
+const menus = computed(() => {
+  const list = [
+    { key: 'dashboard', path: '/dashboard', label: '工作台', icon: DataBoard, badge: 0 },
+    {
+      key: 'campaign',
+      path: '/campaign',
+      label: '投放计划',
+      icon: List,
+      badge: pendingCount.value,
+    },
+    { key: 'stats', path: '/stats', label: '数据回收', icon: DataAnalysis, badge: 0 },
+    { key: 'board', path: '/board', label: '数据看板', icon: PieChart, badge: 0 },
+    { key: 'report', path: '/report', label: '报表中心', icon: Files, badge: 0 },
+  ]
+  if (user.isAdmin) {
+    list.push({ key: 'admin', path: '/admin', label: '系统管理', icon: Setting, badge: 0 })
+  }
+  return list
+})
 
 async function loadMeta() {
   await Promise.allSettled([app.loadProjects(), dict.load()])
