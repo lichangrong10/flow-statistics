@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-ssr/
+coverage/
+test-results/
+playwright-report/
+*.local
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.idea/
+.vscode/*
+!.vscode/extensions.json
+docs/shots/

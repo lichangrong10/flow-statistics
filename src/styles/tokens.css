@@ -1,0 +1,100 @@
+/* ============================================================
+   设计令牌 · 投流统计平台
+   来源：《前端技术方案》§8 视觉与交互规范
+   ============================================================ */
+:root {
+  /* 主色与语义色 */
+  --color-primary: #17416b;
+  --color-primary-light: #e8f0f8;
+  --color-primary-soft: #f3f7fb;
+  --color-accent: #2e6da4;
+  --color-success: #1f8a5b;
+  --color-warning: #c77c0e;
+  --color-danger: #b4372f;
+
+  /* 文本 */
+  --color-text: #1f2329;
+  --color-text-secondary: #5b6673;
+  --color-text-tertiary: #8a94a6;
+
+  /* 线与面 */
+  --color-border: #d3dce6;
+  --color-border-light: #e6ebf2;
+  --color-bg: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-fill-light: #f7f9fc;
+
+  /* 侧边导航（深蓝） */
+  --sidebar-bg: #12304f;
+  --sidebar-bg-deep: #0d2740;
+  --sidebar-text: rgba(255, 255, 255, 0.68);
+  --sidebar-text-strong: #ffffff;
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-active: rgba(255, 255, 255, 0.14);
+
+  /* 字体：标题黑体、正文无衬线、数字等宽 */
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-page-title: 20px;
+  --font-size-section: 16px;
+  --font-size-body: 14px;
+  --font-size-table: 13px;
+  --font-size-aux: 12px;
+  --font-size-metric: 28px;
+  --font-size-metric-lg: 32px;
+
+  /* 8px 基准栅格 */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --page-gutter: 24px;
+  --card-padding: 20px;
+  --table-row-height: 48px;
+
+  /* 圆角与阴影 */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-card: 0 1px 2px rgba(23, 65, 107, 0.03), 0 10px 30px -20px rgba(23, 65, 107, 0.22);
+  --shadow-pop: 0 16px 40px rgba(13, 39, 64, 0.16);
+  --shadow-sidebar: 4px 0 24px rgba(13, 39, 64, 0.08);
+
+  /* Element Plus 主题覆盖 */
+  --el-color-primary: #17416b;
+  --el-color-primary-light-3: #54769a;
+  --el-color-primary-light-5: #8ba3bb;
+  --el-color-primary-light-7: #c2cfdd;
+  --el-color-primary-light-8: #d8e1eb;
+  --el-color-primary-light-9: #edf2f7;
+  --el-color-primary-dark-2: #0f2c4a;
+  --el-color-success: #1f8a5b;
+  --el-color-success-light-9: #e9f6f0;
+  --el-color-warning: #c77c0e;
+  --el-color-warning-light-9: #fcf3e2;
+  --el-color-danger: #b4372f;
+  --el-color-danger-light-9: #fbeceb;
+  --el-color-error: #b4372f;
+  --el-color-info: #6b7c93;
+  --el-text-color-primary: #1f2329;
+  --el-text-color-regular: #3e4652;
+  --el-text-color-secondary: #5b6673;
+  --el-text-color-placeholder: #9aa5b1;
+  --el-border-color: #d3dce6;
+  --el-border-color-light: #e3e9f0;
+  --el-border-color-lighter: #edf1f6;
+  --el-border-radius-base: 6px;
+  --el-border-radius-small: 4px;
+  --el-border-radius-round: 999px;
+  --el-font-family: var(--font-sans);
+  --el-font-size-base: 14px;
+  --el-bg-color: #ffffff;
+  --el-bg-color-page: #f5f7fa;
+  --el-fill-color-light: #f7f9fc;
+  --el-fill-color-lighter: #fafbfd;
+  --el-mask-color: rgba(15, 33, 51, 0.45);
+  --el-box-shadow-light: 0 8px 24px rgba(13, 39, 64, 0.1);
+  --el-transition-duration: 0.18s;
+}
