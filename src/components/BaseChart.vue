@@ -14,7 +14,6 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
-import { useChartTheme } from '@/utils/chart'
 import EmptyState from './EmptyState.vue'
 
 const props = withDefaults(
@@ -30,7 +29,6 @@ const props = withDefaults(
 
 const chartEl = ref<HTMLDivElement>()
 const chart = shallowRef<echarts.ECharts>()
-const theme = useChartTheme()
 let observer: ResizeObserver | null = null
 
 function render() {
@@ -40,7 +38,7 @@ function render() {
 
 onMounted(() => {
   if (!chartEl.value) return
-  chart.value = echarts.init(chartEl.value, theme, { renderer: 'canvas' })
+  chart.value = echarts.init(chartEl.value, undefined, { renderer: 'canvas' })
   render()
   observer = new ResizeObserver(() => chart.value?.resize())
   observer.observe(chartEl.value)
@@ -87,6 +85,6 @@ onBeforeUnmount(() => {
   padding: 12px;
 }
 .chart-loading .skeleton {
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 </style>

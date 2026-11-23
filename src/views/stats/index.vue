@@ -133,8 +133,6 @@
                 </div>
               </div>
 
-
-
               <div v-if="manualError" class="form-error">{{ manualError }}</div>
 
               <div class="manual-actions">
@@ -738,7 +736,7 @@ onMounted(async () => {
   color: var(--color-text-secondary);
 }
 .form-item label i {
-  color: var(--color-danger);
+  color: var(--color-text);
   font-style: normal;
 }
 .hint {
@@ -749,7 +747,7 @@ onMounted(async () => {
 .warn {
   margin: 0;
   font-size: 12px;
-  color: var(--color-warning);
+  color: var(--color-text);
 }
 .dot-sep {
   color: #cbd4df;
@@ -760,8 +758,8 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   padding: 0 12px;
-  border-radius: 6px;
-  background: #f5f8fc;
+  border-radius: var(--radius-sm);
+  background: var(--ink-25);
   color: var(--color-text);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
@@ -772,8 +770,8 @@ onMounted(async () => {
   gap: 10px;
   margin: 20px 0 4px;
   padding: 12px 14px;
-  border-radius: 8px;
-  background: #f7f9fc;
+  border-radius: var(--radius-md);
+  background: var(--ink-50);
   font-size: 12.5px;
   color: var(--color-text-secondary);
 }
@@ -785,9 +783,9 @@ onMounted(async () => {
 }
 .dim-block {
   border: 1px solid var(--color-border-light);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 12px 14px;
-  background: #fcfdff;
+  background: var(--color-surface);
 }
 .dim-title {
   font-size: 12.5px;
@@ -825,15 +823,15 @@ onMounted(async () => {
   font-variant-numeric: tabular-nums;
 }
 .dim-sum.bad {
-  color: var(--color-danger);
+  color: var(--color-text);
 }
 .form-error {
   margin-top: 14px;
   padding: 8px 12px;
-  border-radius: 6px;
-  background: #fdf6f5;
+  border-radius: var(--radius-sm);
+  background: var(--ink-50);
   border: 1px solid #f3d7d4;
-  color: var(--color-danger);
+  color: var(--color-text);
   font-size: 12.5px;
 }
 .manual-actions {
@@ -851,9 +849,9 @@ onMounted(async () => {
 }
 .aside-card {
   border: 1px solid var(--color-border-light);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 14px 16px;
-  background: #fcfdff;
+  background: var(--color-surface);
 }
 .aside-title {
   font-size: 13px;
@@ -884,10 +882,10 @@ onMounted(async () => {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #b9c8d8;
+  background: var(--ink-200);
 }
 .aside-card.tip {
-  background: #f5f8fc;
+  background: var(--ink-25);
 }
 .aside-card.tip p {
   font-size: 12px;
@@ -922,18 +920,18 @@ onMounted(async () => {
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid var(--color-border-light);
-  border-radius: 10px;
-  background: #fcfdff;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 .import-step.active {
-  border-color: #cfdded;
+  border-color: var(--color-border-light);
   background: #f7fafd;
 }
 .is-index {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #eef2f7;
+  background: var(--ink-50);
   color: #8a94a6;
   display: flex;
   align-items: center;
@@ -967,8 +965,8 @@ onMounted(async () => {
   gap: 10px;
   margin-top: 16px;
   padding: 10px 14px;
-  border-radius: 8px;
-  background: #f5f8fc;
+  border-radius: var(--radius-md);
+  background: var(--ink-25);
   font-size: 12.5px;
 }
 .file-name {
@@ -979,19 +977,19 @@ onMounted(async () => {
 .preview-block {
   margin-top: 16px;
   border: 1px solid var(--color-border-light);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 .issue-head,
 .preview-head {
   padding: 10px 14px;
   font-size: 12.5px;
-  background: #fdf6f5;
-  color: var(--color-danger);
+  background: var(--ink-50);
+  color: var(--color-text);
   border-bottom: 1px solid #f3d7d4;
 }
 .preview-head {
-  background: #f7f9fc;
+  background: var(--ink-50);
   color: var(--color-text-secondary);
   border-bottom-color: var(--color-border-light);
 }
@@ -1005,13 +1003,13 @@ onMounted(async () => {
   gap: 12px;
   margin-top: 16px;
   padding: 14px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: #eef8f3;
   border: 1px solid #cfe9dc;
 }
 .result-icon {
   font-size: 28px;
-  color: #1f8a5b;
+  color: var(--color-text);
 }
 .result-title {
   font-size: 13.5px;
@@ -1032,17 +1030,17 @@ onMounted(async () => {
   font-size: 12px;
 }
 .trigger-pill {
-  background: #f2f5f9;
+  background: var(--ink-50);
   color: var(--color-text-secondary);
   font-weight: 400;
 }
 .ok {
-  background: #e9f6f0;
-  color: #1f8a5b;
+  background: var(--ink-50);
+  color: var(--color-text);
 }
 .fail {
-  background: #fbeceb;
-  color: #b4372f;
+  background: var(--ink-50);
+  color: var(--color-text);
 }
 .right {
   text-align: right;

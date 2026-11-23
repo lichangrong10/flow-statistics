@@ -35,7 +35,8 @@ const text = computed(() => {
   font-variant-numeric: tabular-nums;
 }
 .negative {
-  color: var(--color-danger);
+  color: var(--color-text);
+  font-weight: 600;
 }
 .muted {
   color: var(--color-text-secondary);

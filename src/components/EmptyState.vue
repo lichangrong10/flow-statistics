@@ -2,31 +2,31 @@
   <div class="empty-state" :class="[`type-${type}`]">
     <div class="illustration">
       <svg viewBox="0 0 160 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="18" y="16" width="124" height="64" rx="8" fill="#F3F7FB" stroke="#DCE6F0" />
-        <path d="M18 32H142" stroke="#DCE6F0" stroke-width="1.5" />
-        <circle cx="28" cy="24" r="2" fill="#C3D2E1" />
-        <circle cx="35" cy="24" r="2" fill="#C3D2E1" />
-        <circle cx="42" cy="24" r="2" fill="#C3D2E1" />
+        <rect class="frame" x="18" y="16" width="124" height="64" rx="2" />
+        <path class="line" d="M18 32H142" stroke-width="1" />
+        <circle class="dot" cx="28" cy="24" r="2" />
+        <circle class="dot" cx="35" cy="24" r="2" />
+        <circle class="dot" cx="42" cy="24" r="2" />
         <path
           v-if="type !== 'error' && type !== 'no-perm'"
           d="M34 70L50 56L64 62L82 44L100 52L126 36"
-          stroke="#9DB6CD"
-          stroke-width="2.4"
+          class="spark"
+          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
         <path
           v-else-if="type === 'error'"
           d="M80 38V52M80 60V62"
-          stroke="#C08A83"
-          stroke-width="3.2"
+          class="error-mark"
+          stroke-width="3"
           stroke-linecap="round"
         />
-        <circle v-if="type === 'error'" cx="80" cy="64" r="1.8" fill="#C08A83" />
+        <circle v-if="type === 'error'" class="error-mark-fill" cx="80" cy="64" r="1.8" />
         <path
           v-else
           d="M72 44V61C72 64 74 65 77 65H83C86 65 88 64 88 61V44M72 44H88M75 44V41H85V44"
-          stroke="#C3B08C"
+          class="lock"
           stroke-width="2"
           stroke-linecap="round"
         />
@@ -79,6 +79,31 @@ const displayTitle = computed(() => {
 .illustration {
   width: 160px;
   opacity: 0.9;
+}
+.frame {
+  fill: var(--ink-25);
+  stroke: var(--color-border);
+}
+.line {
+  stroke: var(--color-border);
+}
+.dot {
+  fill: var(--ink-300);
+}
+.spark {
+  stroke: var(--ink-400);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.error-mark {
+  stroke: var(--signal-danger);
+}
+.error-mark-fill {
+  fill: var(--signal-danger);
+}
+.lock {
+  stroke: var(--ink-400);
+  stroke-linecap: round;
 }
 .empty-title {
   margin-top: 12px;

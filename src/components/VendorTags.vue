@@ -51,19 +51,19 @@ const tagWidth = computed(() => (rest.value.length ? Math.min(props.tagMaxWidth,
   padding: 0 6px;
   height: 20px;
   line-height: 20px;
-  border-radius: 4px;
-  background: var(--color-primary-soft);
-  border: 1px solid #e1eaf3;
-  color: #3b5e80;
-  font-size: 11.5px;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  border: var(--hairline);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-micro);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .vendor-tag.more {
-  background: #f2f4f7;
-  border-color: #e6ebf2;
-  color: var(--color-text-secondary);
+  background: var(--ink-50);
+  border: var(--hairline);
+  color: var(--color-text-tertiary);
   padding: 0 5px;
 }
 .tip-line {

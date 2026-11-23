@@ -1,6 +1,6 @@
 <template>
-  <span class="status-tag" :style="style">
-    <span class="dot" />
+  <span class="status-tag" :class="{ small: size === 'small' }">
+    <span class="status-dot" :style="{ background: meta.color }" />
     {{ meta.label }}
   </span>
 </template>
@@ -15,34 +15,45 @@ const props = defineProps<{
   size?: 'small' | 'default'
 }>()
 
-const meta = computed(() => STATUS_META[props.status] ?? { label: props.status, color: '#5B6673', bg: '#F2F4F7', border: '#E3E7ED' })
-
-const style = computed(() => ({
-  color: meta.value.color,
-  background: meta.value.bg,
-  borderColor: meta.value.border,
-  height: props.size === 'small' ? '20px' : '22px',
-  fontSize: props.size === 'small' ? '11px' : '12px',
-}))
+const meta = computed(
+  () =>
+    STATUS_META[props.status] ?? {
+      label: props.status,
+      color: '#858076',
+    },
+)
 </script>
 
 <style scoped>
 .status-tag {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  height: 22px;
   padding: 0 8px;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  border: var(--hairline);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-micro);
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
+  background: transparent;
+  letter-spacing: 0.01em;
 }
-.dot {
-  width: 5px;
-  height: 5px;
+.status-tag.small {
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: currentColor;
   flex: none;
+}
+.status-tag.small .status-dot {
+  width: 6px;
+  height: 6px;
 }
 </style>

@@ -19,6 +19,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '登录', public: true },
   },
   {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: () => import('@/views/admin/AdminLoginView.vue'),
+    meta: { title: '管理员登录', public: true },
+  },
+  {
     path: '/',
     component: DefaultLayout,
     redirect: '/dashboard',
@@ -99,12 +105,15 @@ router.beforeEach(async (to) => {
   const user = useUserStore()
 
   if (to.meta.public) {
-    if (to.name === 'login' && user.isLoggedIn) return { path: '/dashboard' }
+    if ((to.name === 'login' || to.name === 'admin-login') && user.isLoggedIn) {
+      return { path: user.isAdmin ? '/admin' : '/dashboard' }
+    }
     return true
   }
 
   if (!user.isLoggedIn) {
-    return { path: '/login', query: to.fullPath === '/' ? {} : { redirect: to.fullPath } }
+    const loginPath = to.path.startsWith('/admin') ? '/admin/login' : '/login'
+    return { path: loginPath, query: to.fullPath === '/' ? {} : { redirect: to.fullPath } }
   }
 
   if (!user.profile) {

@@ -173,17 +173,6 @@ onMounted(() => {
 
 <template>
   <div v-loading="loading" class="dict-tab">
-    <el-alert
-      class="dict-alert"
-      type="info"
-      :closable="false"
-      show-icon
-      :title="
-        IS_BACKEND_MODE
-          ? '渠道配置实时保存到后端；年龄段与指标口径后端暂未提供写接口，当前只读。'
-          : '字典项由系统统一预置，管理端仅维护是否启用、默认出价方式与指标口径，不支持新增或删除，避免口径漂移。'
-      "
-    />
 
     <!-- 渠道字典 -->
     <section class="section">

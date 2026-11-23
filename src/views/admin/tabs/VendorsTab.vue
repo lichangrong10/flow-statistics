@@ -425,7 +425,7 @@ onMounted(() => {
 }
 
 .plan-count.is-used {
-  color: var(--color-warning);
+  color: var(--color-text);
   font-weight: 500;
 }
 

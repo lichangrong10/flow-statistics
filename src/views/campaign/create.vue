@@ -847,7 +847,7 @@ onMounted(async () => {
   gap: 0;
   padding: 20px 24px;
   border-bottom: 1px solid var(--color-border-light);
-  background: linear-gradient(180deg, #fbfcfe, #fff);
+  background: var(--color-surface);
 }
 .step {
   position: relative;
@@ -871,7 +871,7 @@ onMounted(async () => {
   font-size: 12.5px;
   font-weight: 600;
   flex: none;
-  background: #eef2f7;
+  background: var(--ink-50);
   color: #8a94a6;
   border: 1px solid #e3e9f0;
   transition: all 0.18s ease;
@@ -900,36 +900,36 @@ onMounted(async () => {
   top: 13px;
   width: 16px;
   height: 1px;
-  background: #e3e9f0;
+  background: var(--ink-100);
 }
 .step.active .step-index {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(23, 65, 107, 0.1);
+  
 }
 .step.active .step-title {
   color: var(--color-text);
   font-weight: 600;
 }
 .step.done .step-index {
-  background: #e9f6f0;
-  border-color: #bfe3d1;
-  color: #1f8a5b;
+  background: var(--ink-50);
+  border-color: var(--color-border);
+  color: var(--color-text);
 }
 .step.done .step-title {
   color: var(--color-text);
 }
 .step.error .step-index {
-  background: #fbeceb;
-  border-color: #f0c9c5;
-  color: var(--color-danger);
+  background: var(--ink-50);
+  border-color: var(--color-border);
+  color: var(--color-text);
 }
 .step.error.active .step-index {
   background: var(--color-danger);
-  border-color: var(--color-danger);
+  border-color: var(--color-text);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(180, 55, 47, 0.1);
+  
 }
 
 .step-body {
@@ -955,19 +955,19 @@ onMounted(async () => {
   color: var(--color-text-secondary);
 }
 .form-item label i {
-  color: var(--color-danger);
+  color: var(--color-text);
   font-style: normal;
   margin-left: 2px;
 }
 .form-item.invalid :deep(.el-input__wrapper),
 .form-item.invalid :deep(.el-select__wrapper),
 .form-item.invalid :deep(.el-textarea__inner) {
-  box-shadow: 0 0 0 1px var(--color-danger) inset;
+  
 }
 .err {
   margin: 0;
   font-size: 12px;
-  color: var(--color-danger);
+  color: var(--color-text);
   line-height: 1.5;
 }
 .hint {
@@ -990,25 +990,25 @@ onMounted(async () => {
   height: 52px;
   padding: 0 12px;
   border: 1px solid var(--color-border-light);
-  border-radius: 8px;
-  background: #fbfcfe;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.16s ease;
 }
 .channel-card:hover {
-  border-color: #b9cde2;
+  border-color: var(--color-border);
   background: #fff;
 }
 .channel-card.selected {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
-  box-shadow: 0 0 0 1px var(--color-primary) inset;
+  
 }
 .channel-icon {
   width: 26px;
   height: 26px;
-  border-radius: 7px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1038,21 +1038,21 @@ onMounted(async () => {
   gap: 10px;
   padding: 12px 14px;
   border: 1px solid var(--color-border-light);
-  border-radius: 8px;
-  background: #fbfcfe;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
   transition: all 0.16s ease;
 }
 .goal-card:hover {
-  border-color: #b9cde2;
+  border-color: var(--color-border);
   background: #fff;
 }
 .goal-card.selected {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
-  box-shadow: 0 0 0 1px var(--color-primary) inset;
+  
 }
 .goal-radio {
   width: 14px;
@@ -1097,8 +1097,8 @@ onMounted(async () => {
 .chip {
   padding: 6px 14px;
   border: 1px solid var(--color-border-light);
-  border-radius: 999px;
-  background: #fbfcfe;
+  border-radius: var(--radius-xs);
+  background: var(--color-surface);
   font-size: 13px;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -1106,13 +1106,13 @@ onMounted(async () => {
   transition: all 0.15s ease;
 }
 .chip:hover {
-  border-color: #b9cde2;
+  border-color: var(--color-border);
 }
 .chip.selected {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(23, 65, 107, 0.18);
+  
 }
 
 .review {
@@ -1139,8 +1139,8 @@ onMounted(async () => {
   gap: 8px;
   padding: 12px 14px;
   border: 1px dashed var(--color-border);
-  border-radius: 8px;
-  background: #fbfcfe;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   font-size: 12.5px;
   color: var(--color-text-tertiary);
 }
@@ -1155,18 +1155,18 @@ onMounted(async () => {
   color: var(--color-text-secondary);
 }
 .publish-label i {
-  color: var(--color-danger);
+  color: var(--color-text);
   font-style: normal;
 }
 .confirm-row {
   padding: 14px 16px;
-  border-radius: 8px;
-  background: #f7f9fc;
+  border-radius: var(--radius-md);
+  background: var(--ink-50);
   border: 1px solid var(--color-border-light);
 }
 .confirm-row.invalid {
-  border-color: #f0c9c5;
-  background: #fdf6f5;
+  border-color: var(--color-border);
+  background: var(--ink-50);
 }
 
 .wizard-foot {
@@ -1176,7 +1176,7 @@ onMounted(async () => {
   gap: 12px;
   padding: 16px 24px;
   border-top: 1px solid var(--color-border-light);
-  background: #fbfcfe;
+  background: var(--color-surface);
 }
 .foot-right {
   display: flex;
@@ -1256,14 +1256,14 @@ onMounted(async () => {
   margin-top: 8px;
   height: 6px;
   border-radius: 3px;
-  background: #eef2f7;
+  background: var(--ink-50);
   overflow: hidden;
 }
 .budget-fill {
   display: block;
   height: 100%;
   border-radius: 3px;
-  background: linear-gradient(90deg, #2e6da4, #17416b);
+  background: var(--ink-950);
   transition: width 0.3s ease;
 }
 .budget-foot {
@@ -1281,14 +1281,14 @@ onMounted(async () => {
   gap: 8px;
   margin-top: 16px;
   padding: 10px 12px;
-  border-radius: 8px;
-  background: #f5f8fc;
+  border-radius: var(--radius-md);
+  background: var(--ink-25);
   font-size: 11.5px;
   line-height: 1.7;
   color: var(--color-text-secondary);
 }
 .summary-tip .el-icon {
-  color: var(--color-accent);
+  color: var(--color-text);
   margin-top: 2px;
 }
 

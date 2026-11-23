@@ -27,18 +27,6 @@
           <span v-if="!collapsed && item.badge" class="nav-badge">{{ item.badge }}</span>
         </router-link>
       </nav>
-
-      <div class="sidebar-foot">
-        <div
-          v-show="!collapsed"
-          class="env-chip"
-          title="数据来自内网后端（192.168.9.224:3000），由后端模拟投流服务生成"
-        >
-          <span class="env-dot" />
-          已连接内网后端
-        </div>
-        <div v-show="!collapsed" class="version">前端版本 {{ version }}</div>
-      </div>
     </aside>
 
     <div class="main">
@@ -48,44 +36,38 @@
             <el-icon :size="18"><Expand v-if="collapsed" /><Fold v-else /></el-icon>
           </el-button>
           <div class="breadcrumb">
-            <span class="crumb-root">投流统计平台</span>
-            <span class="crumb-sep">/</span>
             <span class="crumb-current">{{ pageTitle }}</span>
           </div>
         </div>
 
         <div class="topbar-right">
-          <div class="project-select">
-            <el-icon class="project-icon"><FolderOpened /></el-icon>
-            <el-select
-              v-model="currentProjectId"
-              size="default"
-              class="project-el"
-              placeholder="选择项目"
-              @change="onProjectChange"
-            >
-              <el-option
-                v-for="project in app.projects"
-                :key="project.id"
-                :label="project.name"
-                :value="project.id"
-              />
-            </el-select>
-          </div>
-
           <span v-if="updatedText" class="data-time">
             <span class="data-dot" />数据更新于 {{ updatedText }}
           </span>
 
+          <el-tooltip
+            :content="app.theme === 'dark' ? '切换到明色' : '切换到暗色'"
+            placement="bottom"
+          >
+            <el-button
+              text
+              circle
+              class="icon-btn theme-btn"
+              :aria-label="app.theme === 'dark' ? '切换到明色主题' : '切换到暗色主题'"
+              @click="app.toggleTheme()"
+            >
+              <el-icon :size="17">
+                <Sunny v-if="app.theme === 'dark'" />
+                <Moon v-else />
+              </el-icon>
+            </el-button>
+          </el-tooltip>
+
           <div class="top-divider" />
 
           <el-dropdown trigger="click" @command="onUserCommand">
-            <div class="user-chip">
-              <div class="avatar">{{ initial }}</div>
-              <div class="user-meta">
-                <span class="user-name">{{ user.displayName || '未登录' }}</span>
-                <span class="user-role">{{ user.roleLabel }}</span>
-              </div>
+            <div class="user-chip" :title="`${user.profile?.username ?? ''} · ${user.roleLabel}`">
+              <span class="user-name">{{ user.displayName || '未登录' }}</span>
               <el-icon class="caret" :size="12"><ArrowDown /></el-icon>
             </div>
             <template #dropdown>
@@ -121,10 +103,11 @@ import {
   Expand,
   Files,
   Fold,
-  FolderOpened,
   List,
+  Moon,
   PieChart,
   Setting,
+  Sunny,
 } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { useAppStore } from '@/stores/app'
@@ -146,14 +129,8 @@ const version = APP_VERSION
 const updatedText = ref('')
 const pendingCount = ref(0)
 
-const currentProjectId = computed({
-  get: () => app.currentProjectId ?? undefined,
-  set: (value: number) => app.setProject(value),
-})
-
 const pageTitle = computed(() => (route.meta.title as string) ?? '工作台')
 const activeMenu = computed(() => (route.meta.activeMenu as string) ?? (route.name as string))
-const initial = computed(() => (user.displayName || 'U').slice(0, 1))
 
 const menus = computed(() => {
   const list = [
@@ -195,11 +172,6 @@ async function loadMeta() {
   }
 }
 
-function onProjectChange(value: number) {
-  app.setProject(value)
-  loadMeta()
-}
-
 async function onUserCommand(command: string) {
   if (command === 'logout') {
     await user.logout()
@@ -221,62 +193,64 @@ onMounted(loadMeta)
 
 /* ---------------- 侧边导航 ---------------- */
 .sidebar {
-  width: 232px;
+  width: var(--shell-sidebar);
   flex: none;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #133252 0%, #0d2740 100%);
-  box-shadow: var(--shadow-sidebar);
-  transition: width 0.2s ease;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  transition: width 0.16s ease;
   position: relative;
   z-index: 20;
 }
 .sidebar.is-collapsed {
-  width: 72px;
+  width: var(--shell-sidebar-collapsed);
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 60px;
-  padding: 0 18px;
+  gap: 12px;
+  height: var(--shell-topbar);
+  padding: 0 16px;
   flex: none;
+  border-bottom: 1px solid var(--sidebar-border);
 }
 .brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  background: linear-gradient(135deg, #2e6da4, #17416b);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: var(--sidebar-text-strong);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.32);
   flex: none;
 }
 .brand-text {
   min-width: 0;
 }
 .brand-title {
-  color: #fff;
-  font-size: 15px;
+  color: var(--sidebar-text-strong);
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.4px;
-  line-height: 20px;
+  letter-spacing: 0.02em;
+  line-height: 18px;
   white-space: nowrap;
 }
 .brand-sub {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 11px;
+  color: var(--sidebar-text);
+  font-size: var(--font-size-micro);
   line-height: 16px;
   white-space: nowrap;
+  letter-spacing: 0.06em;
 }
 .nav {
   flex: 1;
-  padding: 14px 12px;
+  padding: 12px 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   overflow-y: auto;
 }
 .nav-item {
@@ -284,35 +258,35 @@ onMounted(loadMeta)
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 42px;
+  height: 40px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   color: var(--sidebar-text);
   font-size: 14px;
-  transition: background 0.16s ease, color 0.16s ease;
+  transition: background 0.12s ease, color 0.12s ease;
   white-space: nowrap;
 }
 .nav-item:hover {
   background: var(--sidebar-hover);
-  color: #fff;
+  color: var(--sidebar-text-strong);
 }
 .nav-item.active {
   background: var(--sidebar-active);
-  color: #fff;
+  color: var(--sidebar-text-strong);
   font-weight: 500;
 }
 .nav-item.active::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 11px;
-  bottom: 11px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: #7fb3e0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 0;
+  background: var(--sidebar-text-strong);
 }
 .nav-icon {
-  font-size: 17px;
+  font-size: 16px;
   flex: none;
 }
 .nav-label {
@@ -322,41 +296,14 @@ onMounted(loadMeta)
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  border-radius: 9px;
-  background: #c77c0e;
-  color: #fff;
-  font-size: 11px;
+  border-radius: var(--radius-xs);
+  background: var(--sidebar-text-strong);
+  color: #111110;
+  font-size: var(--font-size-micro);
   line-height: 18px;
   text-align: center;
-  font-weight: 500;
-}
-.sidebar-foot {
-  padding: 14px 18px 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  flex: none;
-}
-.env-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 22px;
-  padding: 0 9px;
-  border-radius: 999px;
-  background: rgba(63, 168, 122, 0.16);
-  color: #8fd6b4;
-  font-size: 11px;
-  white-space: nowrap;
-}
-.env-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #4cc38a;
-}
-.version {
-  margin-top: 8px;
-  color: rgba(255, 255, 255, 0.32);
-  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------------- 主区域 ---------------- */
@@ -368,93 +315,73 @@ onMounted(loadMeta)
   overflow: hidden;
 }
 .topbar {
-  height: 60px;
+  height: var(--shell-topbar);
   flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 20px 0 8px;
-  background: #fff;
+  padding: 0 16px 0 8px;
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-border-light);
   z-index: 10;
 }
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 .collapse-btn {
   color: var(--color-text-secondary);
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
 }
 .breadcrumb {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-aux);
   white-space: nowrap;
 }
 .crumb-root {
   color: var(--color-text-tertiary);
 }
 .crumb-sep {
-  color: #c4cdd8;
+  color: var(--ink-300);
 }
 .crumb-current {
   color: var(--color-text);
-  font-size: 15px;
+  font-size: var(--font-size-body);
   font-weight: 600;
+  letter-spacing: var(--tracking-tight);
 }
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
-}
-.project-select {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.project-icon {
-  color: var(--color-text-tertiary);
-  font-size: 15px;
-}
-.project-el {
-  width: 250px;
-}
-.project-el :deep(.el-select__wrapper) {
-  box-shadow: none;
-  background: transparent;
-  padding-left: 2px;
-}
-.project-el :deep(.el-select__wrapper:hover) {
-  box-shadow: none;
-  background: var(--color-primary-soft);
-}
-.project-el :deep(.el-select__selected-item) {
-  font-size: 13px;
-  color: var(--color-text);
 }
 .data-time {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   color: var(--color-text-tertiary);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-micro);
   white-space: nowrap;
 }
 .data-dot {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #3fa87a;
+  background: var(--signal-ok);
 }
 .icon-btn {
   color: var(--color-text-secondary);
+}
+.icon-btn:hover {
+  background: var(--ink-50);
 }
 .top-divider {
   width: 1px;
@@ -466,39 +393,18 @@ onMounted(loadMeta)
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  padding: 4px 6px 4px 4px;
-  border-radius: 8px;
-  transition: background 0.15s ease;
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  transition: background 0.12s ease;
 }
 .user-chip:hover {
-  background: var(--color-primary-soft);
-}
-.avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #2e6da4, #17416b);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-.user-meta {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
+  background: var(--ink-50);
 }
 .user-name {
-  font-size: 13px;
+  font-size: var(--font-size-aux);
   color: var(--color-text);
   font-weight: 500;
-}
-.user-role {
-  font-size: 11px;
-  color: var(--color-text-tertiary);
+  white-space: nowrap;
 }
 .caret {
   color: var(--color-text-tertiary);
@@ -511,10 +417,37 @@ onMounted(loadMeta)
 }
 
 @media (max-width: 1366px) {
-  .project-el {
-    width: 200px;
+    .data-time {
+    display: none;
   }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: var(--shell-sidebar-collapsed) !important;
+  }
+  .brand {
+    justify-content: center;
+    padding: 0;
+  }
+  .brand-text,
+  .nav-label,
+  .nav-badge,
+  .user-name,
+  .caret,
+  .top-divider,
   .data-time {
+    display: none !important;
+  }
+  .nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+  .topbar {
+    padding: 0 8px;
+  }
+  .crumb-root,
+  .crumb-sep {
     display: none;
   }
 }

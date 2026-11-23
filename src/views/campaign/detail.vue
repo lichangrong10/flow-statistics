@@ -50,7 +50,7 @@
           </div>
           <div v-if="detail.isMock" class="mock-banner">
             <el-icon><InfoFilled /></el-icon>
-            当前计划数据由后端模拟投流生成，仅用于流程验证与演示，不代表真实媒体投放结果
+            模拟投流数据，不代表真实媒体投放结果
           </div>
         </div>
         <div class="head-actions">
@@ -409,7 +409,7 @@ import {
   formatNumber,
   formatPercent,
 } from '@/utils/format'
-import { barOption, donutOption, hbarOption, lineOption } from '@/utils/chart'
+import { barOption, chartColors, donutOption, hbarOption, lineOption } from '@/utils/chart'
 import { generateSeries } from '@/utils/preview-generator'
 
 const route = useRoute()
@@ -577,17 +577,18 @@ const dimensionOption = computed(() => {
     )
   }
   if (dimTab.value === 'gender') {
-    const colorMap: Record<string, string> = { 男: '#2E6DA4', 女: '#C9A227', 未知: '#8A94A6' }
+    const colors = chartColors()
+  const colorMap: Record<string, string> = { 男: colors.palette[1], 女: colors.palette[3], 未知: colors.muted }
     const items = list.map((item) => ({
       name: item.dimName,
       value: Number(item.impressions),
-      color: colorMap[item.dimName] ?? '#6B7C93',
+      color: colorMap[item.dimName] ?? colors.muted,
     }))
     return donutOption(items, { unit: '次' })
   }
   return barOption(
     list.map((item) => item.dimName),
-    [{ name: '曝光量', data: list.map((item) => Number(item.impressions)), color: '#2E9C9A' }],
+    [{ name: '曝光量', data: list.map((item) => Number(item.impressions)), color: chartColors().palette[2] }],
     '次',
   )
 })
@@ -914,7 +915,7 @@ const mockPreviewOption = computed(() =>
       {
         name: '预计曝光',
         data: mockPreviewSeries.value.map((item) => item.impressions),
-        color: '#17416B',
+        color: chartColors().ink,
         area: true,
       },
     ],
@@ -996,7 +997,7 @@ onMounted(loadDetail)
   color: var(--color-text-secondary);
   padding: 2px 8px;
   border-radius: 4px;
-  background: #f4f7fa;
+  background: var(--ink-50);
   border: 1px solid #e6ebf2;
 }
 .meta-row {
@@ -1026,8 +1027,8 @@ onMounted(loadDetail)
   height: 18px;
   line-height: 18px;
   border-radius: 4px;
-  background: #e9f6f0;
-  color: #1f8a5b;
+  background: var(--ink-50);
+  color: var(--color-text);
   font-size: 11px;
 }
 .mock-banner {
@@ -1036,10 +1037,10 @@ onMounted(loadDetail)
   gap: 6px;
   margin-top: 12px;
   padding: 7px 12px;
-  border-radius: 6px;
-  background: #fdf7ea;
+  border-radius: var(--radius-sm);
+  background: var(--ink-50);
   border: 1px solid #f3e4c4;
-  color: #a2710f;
+  color: var(--color-text);
   font-size: 12px;
   width: fit-content;
 }
@@ -1064,8 +1065,8 @@ onMounted(loadDetail)
   display: inline-block;
   margin-left: 4px;
   padding: 0 5px;
-  border-radius: 8px;
-  background: #eef2f7;
+  border-radius: var(--radius-md);
+  background: var(--ink-50);
   color: var(--color-text-secondary);
   font-size: 11px;
   font-weight: 400;
@@ -1096,25 +1097,35 @@ onMounted(loadDetail)
   font-variant-numeric: tabular-nums;
 }
 .done-chip {
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: #e9f6f0;
-  color: #1f8a5b;
-  font-size: 11.5px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  height: 20px;
+  border: var(--hairline);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-micro);
+}
+.done-chip::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal-ok);
 }
 .progress-bar {
   margin-top: 12px;
   height: 10px;
-  border-radius: 5px;
-  background: #eef2f7;
+  border-radius: var(--radius-sm);
+  background: var(--ink-50);
   overflow: hidden;
 }
 .progress-fill {
   display: block;
   height: 100%;
-  border-radius: 5px;
-  background: linear-gradient(90deg, #2e9c9a, #17416b);
+  border-radius: var(--radius-sm);
+  background: var(--ink-950);
   transition: width 0.4s ease;
 }
 .progress-meta {
@@ -1174,16 +1185,16 @@ onMounted(loadDetail)
   margin-left: 4px;
 }
 .legend-block.level-0 {
-  background: #eef2f7;
+  background: var(--ink-50);
 }
 .legend-block.level-1 {
-  background: #cfe0f0;
+  background: var(--color-border);
 }
 .legend-block.level-2 {
   background: #8fb3d3;
 }
 .legend-block.level-3 {
-  background: #2e6da4;
+  background: var(--signal-info);
 }
 .calendar-grid {
   display: grid;
@@ -1201,30 +1212,31 @@ onMounted(loadDetail)
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  font-size: 11px;
-  color: #5b6673;
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-micro);
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
-  background: #fafbfd;
+  background: var(--ink-25);
+  border: 1px solid transparent;
 }
 .calendar-cell.level--1 {
   background: transparent;
 }
 .calendar-cell.level-0 {
-  background: #f1f4f8;
-  color: #a9b3bf;
+  background: var(--ink-50);
+  color: var(--color-text-tertiary);
 }
 .calendar-cell.level-1 {
-  background: #dce9f4;
-  color: #3b5e80;
+  background: var(--ink-75);
+  color: var(--color-text-secondary);
 }
 .calendar-cell.level-2 {
-  background: #a9c7e0;
-  color: #1d4568;
+  background: var(--ink-200);
+  color: var(--color-text);
 }
 .calendar-cell.level-3 {
-  background: #2e6da4;
-  color: #fff;
+  background: var(--ink-800);
+  color: var(--color-text-inverse);
 }
 .tab-toolbar {
   display: flex;
@@ -1240,7 +1252,7 @@ onMounted(loadDetail)
   font-size: 12px;
 }
 .source-pill {
-  background: #f2f5f9;
+  background: var(--ink-50);
   color: var(--color-text-secondary);
   font-weight: 400;
 }
@@ -1260,9 +1272,9 @@ onMounted(loadDetail)
 }
 .dimension-chart {
   border: 1px solid var(--color-border-light);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 10px 6px;
-  background: #fcfdff;
+  background: var(--color-surface);
 }
 .dimension-table :deep(.el-table) {
   font-size: 12.5px;
@@ -1289,7 +1301,7 @@ onMounted(loadDetail)
   background: var(--color-accent);
   margin-top: 7px;
   flex: none;
-  box-shadow: 0 0 0 3px rgba(46, 109, 164, 0.12);
+  
 }
 .log-main {
   flex: 1;
@@ -1323,8 +1335,8 @@ onMounted(loadDetail)
 .dialog-tip {
   margin-bottom: 14px;
   padding: 8px 12px;
-  border-radius: 6px;
-  background: #f5f8fc;
+  border-radius: var(--radius-sm);
+  background: var(--ink-25);
   font-size: 12px;
   line-height: 1.7;
   color: var(--color-text-secondary);
@@ -1332,7 +1344,7 @@ onMounted(loadDetail)
 .dialog-error {
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-danger);
+  color: var(--color-text);
 }
 .mock-layout {
   display: grid;
@@ -1344,9 +1356,9 @@ onMounted(loadDetail)
 }
 .mock-preview {
   border: 1px solid var(--color-border-light);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 8px 8px 4px;
-  background: #fcfdff;
+  background: var(--color-surface);
 }
 .mock-totals {
   display: grid;

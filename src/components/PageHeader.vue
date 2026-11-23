@@ -29,14 +29,16 @@ defineProps<{
 .title {
   font-size: var(--font-size-page-title);
   font-weight: 600;
-  line-height: 28px;
+  line-height: 34px;
   color: var(--color-text);
-  letter-spacing: 0.2px;
+  letter-spacing: var(--tracking-tight);
+  white-space: nowrap;
 }
 .subtitle {
   margin-top: 4px;
-  font-size: 13px;
-  color: var(--color-text-secondary);
+  font-size: var(--font-size-aux);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.01em;
 }
 .right {
   display: flex;
@@ -45,3 +47,24 @@ defineProps<{
   flex: none;
 }
 </style>
+
+@media (max-width: 720px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 720px) {
+  .subtitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

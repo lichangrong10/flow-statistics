@@ -1,8 +1,6 @@
 <template>
   <span class="channel-tag">
-    <span class="channel-icon" :style="{ background: meta.soft, color: meta.color }">
-      {{ meta.short }}
-    </span>
+    <span class="channel-icon">{{ meta.short }}</span>
     <span class="channel-name">{{ meta.label }}</span>
   </span>
 </template>
@@ -18,8 +16,6 @@ const meta = computed(
     CHANNEL_META[props.channel] ?? {
       label: props.channel,
       short: String(props.channel).slice(0, 1),
-      color: '#5B6673',
-      soft: '#F2F4F7',
     },
 )
 </script>
@@ -34,16 +30,19 @@ const meta = computed(
 .channel-icon {
   width: 20px;
   height: 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
+  border: var(--hairline);
+  background: transparent;
+  color: var(--color-text-secondary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: var(--font-size-micro);
   font-weight: 600;
   flex: none;
 }
 .channel-name {
-  font-size: 13px;
+  font-size: var(--font-size-aux);
   color: var(--color-text);
 }
 </style>

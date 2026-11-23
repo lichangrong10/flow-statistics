@@ -26,32 +26,36 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 .segmented {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  padding: 3px;
-  background: #f2f5f9;
-  border-radius: 8px;
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border: var(--hairline);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
 }
 .seg-item {
   appearance: none;
   border: none;
+  border-radius: 0;
   background: transparent;
   padding: 5px 12px;
   height: 28px;
-  border-radius: 6px;
-  font-size: 12.5px;
+  font-size: var(--font-size-aux);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.12s ease, color 0.12s ease;
   font-family: inherit;
   white-space: nowrap;
+}
+.seg-item + .seg-item {
+  border-left: var(--hairline);
 }
 .seg-item:hover {
   color: var(--color-text);
 }
 .seg-item.active {
-  background: #fff;
-  color: var(--color-primary);
+  background: var(--ink-950);
+  color: var(--color-text-inverse);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(23, 65, 107, 0.1);
 }
 </style>

@@ -372,21 +372,21 @@ onBeforeUnmount(stopPolling)
   gap: 8px;
   padding: 10px 12px;
   border: 1px solid var(--color-border-light);
-  border-radius: 8px;
-  background: #fbfcfe;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
   transition: all 0.15s ease;
 }
 .type-card:hover {
-  border-color: #b9cde2;
+  border-color: var(--color-border);
   background: #fff;
 }
 .type-card.selected {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
-  box-shadow: 0 0 0 1px var(--color-primary) inset;
+  
 }
 .type-radio {
   width: 12px;
@@ -453,7 +453,7 @@ onBeforeUnmount(stopPolling)
   align-items: center;
   gap: 5px;
   margin-left: 8px;
-  color: var(--color-accent);
+  color: var(--color-text);
   font-size: 11.5px;
 }
 .polling-dot {
@@ -486,7 +486,7 @@ onBeforeUnmount(stopPolling)
   height: 18px;
   line-height: 18px;
   border-radius: 3px;
-  background: #f2f5f9;
+  background: var(--ink-50);
   color: var(--color-text-tertiary);
   font-size: 10.5px;
   font-weight: 500;
@@ -496,25 +496,25 @@ onBeforeUnmount(stopPolling)
   align-items: center;
   height: 22px;
   padding: 0 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   font-size: 11.5px;
   font-weight: 500;
 }
 .pill.pending {
-  background: #fcf3e2;
-  color: #c77c0e;
+  background: var(--ink-50);
+  color: var(--color-text);
 }
 .pill.running {
-  background: #eaf2fa;
-  color: #2e6da4;
+  background: var(--ink-50);
+  color: var(--color-text);
 }
 .pill.success {
-  background: #e9f6f0;
-  color: #1f8a5b;
+  background: var(--ink-50);
+  color: var(--color-text);
 }
 .pill.failed {
-  background: #fbeceb;
-  color: #b4372f;
+  background: var(--ink-50);
+  color: var(--color-text);
 }
 .file-cell {
   display: flex;
@@ -543,7 +543,7 @@ onBeforeUnmount(stopPolling)
 }
 .fail-text {
   font-size: 12px;
-  color: var(--color-danger);
+  color: var(--color-text);
 }
 
 @media (max-width: 1200px) {

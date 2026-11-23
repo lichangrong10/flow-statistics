@@ -298,16 +298,16 @@ const canArchive = computed(
 )
 
 const columns: TableColumn[] = [
-  { prop: 'code', label: '投放单号', width: 136, slot: 'code' },
-  { prop: 'name', label: '计划名称', minWidth: 136, slot: 'name' },
-  { prop: 'channel', label: '渠道', width: 78, slot: 'channel' },
-  { prop: 'vendors', label: '厂商', width: 112, slot: 'vendors' },
-  { prop: 'status', label: '状态', width: 76, slot: 'status' },
-  { prop: 'startDate', label: '排期', width: 158, slot: 'schedule' },
-  { prop: 'targetImpressions', label: '计划曝光量', width: 92, align: 'right', slot: 'target' },
-  { prop: 'impressions', label: '实际曝光量', width: 92, align: 'right', slot: 'impressions' },
-  { prop: 'completionRate', label: '完成率', width: 82, align: 'right', slot: 'completion' },
-  { prop: 'actions', label: '操作', width: 148, fixed: 'right', slot: 'actions' },
+  { prop: 'code', label: '投放单号', width: 124, slot: 'code' },
+  { prop: 'name', label: '计划名称', minWidth: 120, slot: 'name' },
+  { prop: 'channel', label: '渠道', width: 70, slot: 'channel' },
+  { prop: 'vendors', label: '厂商', width: 100, slot: 'vendors' },
+  { prop: 'status', label: '状态', width: 70, slot: 'status' },
+  { prop: 'startDate', label: '排期', width: 146, slot: 'schedule' },
+  { prop: 'targetImpressions', label: '计划曝光量', width: 84, align: 'right', slot: 'target' },
+  { prop: 'impressions', label: '实际曝光量', width: 84, align: 'right', slot: 'impressions' },
+  { prop: 'completionRate', label: '完成率', width: 72, align: 'right', slot: 'completion' },
+  { prop: 'actions', label: '操作', width: 136, fixed: 'right', slot: 'actions' },
 ]
 
 function str(value: unknown): string {
@@ -688,7 +688,7 @@ onMounted(() => {
 .selected-tip {
   margin-left: 10px;
   padding: 1px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   background: var(--color-primary-light);
   color: var(--color-primary);
   font-size: 12px;
@@ -715,8 +715,8 @@ onMounted(() => {
   line-height: 20px;
 }
 .code-cell:hover {
-  color: var(--color-accent);
-  border-bottom-color: #c2d5e6;
+  color: var(--color-text);
+  border-bottom-color: var(--color-border);
 }
 .copy-icon {
   font-size: 13px;
@@ -729,7 +729,7 @@ onMounted(() => {
   opacity: 1;
 }
 .copy-icon:hover {
-  color: var(--color-accent);
+  color: var(--color-text);
 }
 .name-cell {
   min-width: 0;
@@ -778,21 +778,21 @@ onMounted(() => {
   height: 16px;
   line-height: 16px;
   border-radius: 4px;
-  background: #e9f6f0;
-  color: #1f8a5b;
+  background: var(--ink-50);
+  color: var(--color-text);
   font-size: 11px;
 }
 .completion {
   white-space: nowrap;
 }
 :deep(.row-highlight td.el-table__cell) {
-  background: #f2f7fc !important;
+  background: var(--ink-50) !important;
 }
 :deep(.row-highlight td.el-table__cell:first-child) {
-  box-shadow: inset 3px 0 0 var(--color-accent);
+  
 }
 .completion.over {
-  color: #1f8a5b;
+  color: var(--color-text);
   font-weight: 600;
 }
 .right {

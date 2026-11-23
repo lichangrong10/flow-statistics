@@ -24,15 +24,8 @@ const tabs = [
   <div class="page admin-page">
     <PageHeader
       title="系统管理"
-      subtitle="维护用户账号、厂商主数据、模拟参数、渠道字典与操作日志；所有修改实时写入后端并记入操作日志"
-    >
-      <template #extra>
-        <span class="backend-chip">
-          <span class="backend-dot" />
-          已连接内网后端
-        </span>
-      </template>
-    </PageHeader>
+      subtitle="用户、厂商、模拟参数、字典与操作日志"
+    />
 
     <div class="admin-panel">
       <el-tabs v-model="activeTab" class="admin-tabs">
@@ -64,7 +57,7 @@ const tabs = [
 .admin-panel {
   background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-card, 8px);
+  border-radius: var(--radius-md);
   padding: 4px 16px 16px;
 }
 .admin-tabs :deep(.el-tabs__header) {
@@ -78,23 +71,5 @@ const tabs = [
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-.backend-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 26px;
-  padding: 0 10px;
-  font-size: 12px;
-  color: #1f8a5b;
-  background: #e9f6f0;
-  border: 1px solid #c9e8da;
-  border-radius: 999px;
-}
-.backend-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #1f8a5b;
 }
 </style>

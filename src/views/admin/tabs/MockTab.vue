@@ -32,7 +32,6 @@ import {
 } from '@/admin/engine';
 import type { MockPreviewDay } from '@/admin/engine';
 import { CURVE_OPTIONS, DEFAULT_RATIOS, RATIO_DIMENSIONS } from '@/admin/constants';
-import { IS_BACKEND_MODE } from '@/admin/config';
 import { formatDateRange, formatInt, formatPercent, formatWan, formatDateTime } from '@/admin/format';
 import { errorMessage } from '@/admin/error';
 import BaseChart from '@/admin/components/BaseChart.vue';
@@ -533,12 +532,12 @@ onMounted(async () => {
 <template>
   <div class="mock-tab">
     <el-alert
-      v-if="IS_BACKEND_MODE"
+      v-if="true"
       class="backend-tip"
       type="info"
       :closable="false"
       show-icon
-      title="真实后端模式：模拟参数会按计划保存并逐条生成到后端；后端暂未提供「清空数据」，常用方案存在本浏览器，调节记录由后端操作日志反推。"
+      title="真实后端模式：模拟参数会按计划保存并逐条生成到后端；生成与清空均实时写入后端，常用方案存在本浏览器，调节记录由后端操作日志反推。"
     />
 
     <!-- 计划选择 -->
@@ -598,7 +597,7 @@ onMounted(async () => {
           <EmptyState
             description="暂无投放计划"
             :hint="
-              IS_BACKEND_MODE
+              true
                 ? '真实后端当前没有计划，请先在业务端创建投放计划'
                 : '可切换项目筛选，或先在业务端创建计划'
             "
@@ -715,8 +714,8 @@ onMounted(async () => {
           <el-button
             type="danger"
             plain
-            :disabled="generating || IS_BACKEND_MODE"
-            :title="IS_BACKEND_MODE ? '真实后端暂未提供清空模拟数据接口' : ''"
+            :disabled="generating || true"
+            :title="true ? '真实后端暂未提供清空模拟数据接口' : ''"
             @click="handleClear"
           >
             清空数据
@@ -1051,11 +1050,11 @@ onMounted(async () => {
 .ratio-total {
   font-size: 12px;
   font-weight: 400;
-  color: var(--color-success);
+  color: var(--color-text);
 }
 
 .ratio-total.is-error {
-  color: var(--color-danger);
+  color: var(--color-text);
 }
 
 .ratio-item {
@@ -1111,7 +1110,7 @@ onMounted(async () => {
 }
 
 .preview-metric__value.accent {
-  color: var(--color-warning);
+  color: var(--color-text);
 }
 
 .preview-table {

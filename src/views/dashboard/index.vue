@@ -162,7 +162,7 @@ import { getCampaigns } from '@/api/campaign'
 import type { CampaignListItem, DashboardSummary, DimensionValue, TrendPoint } from '@/types'
 import { lastNDays } from '@/utils/date'
 import { abbrNumber, formatNumber, formatPercent } from '@/utils/format'
-import { donutOption, lineOption } from '@/utils/chart'
+import { chartColors, donutOption, lineOption } from '@/utils/chart'
 
 const router = useRouter()
 const app = useAppStore()
@@ -263,6 +263,7 @@ const kpiCards = computed(() => {
 })
 
 const trendOption = computed(() => {
+  const colors = chartColors()
   const dates = trend.value.map((item) => item.date.slice(5))
   if (trendMetric.value === 'clicks') {
     return lineOption(
@@ -271,7 +272,7 @@ const trendOption = computed(() => {
         {
           name: '点击人数',
           data: trend.value.map((item) => Number(item.clicks)),
-          color: '#2E9C9A',
+          color: colors.palette[1],
           area: true,
         },
       ],
@@ -285,15 +286,16 @@ const trendOption = computed(() => {
     dates,
     hasTarget
       ? [
-          { name: '实际曝光', data: actual, color: '#17416B', area: true },
-          { name: '计划曝光', data: target, color: '#9DB6CD', dashed: true },
+          { name: '实际曝光', data: actual, color: colors.ink, area: true },
+          { name: '计划曝光', data: target, color: colors.muted, dashed: true },
         ]
-      : [{ name: '实际曝光', data: actual, color: '#17416B', area: true }],
+      : [{ name: '实际曝光', data: actual, color: colors.ink, area: true }],
     '次',
   )
 })
 
 const channelOption = computed(() => {
+  void chartColors()
   const items = channelItems.value.map((item) => ({
     name: item.dimName,
     value: Number(item.value),
@@ -422,7 +424,7 @@ onMounted(loadAll)
   padding: 12px 10px;
   margin: 0 -10px;
   border-bottom: 1px solid #f0f3f8;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -472,7 +474,7 @@ onMounted(loadAll)
   padding: 12px 10px;
   margin: 0 -10px;
   border-bottom: 1px solid #f0f3f8;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -486,9 +488,9 @@ onMounted(loadAll)
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #3fa87a;
+  background: var(--signal-ok);
   flex: none;
-  box-shadow: 0 0 0 3px rgba(63, 168, 122, 0.14);
+  
 }
 .ui-main {
   flex: 1;

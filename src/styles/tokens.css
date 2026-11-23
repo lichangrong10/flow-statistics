@@ -1,100 +1,261 @@
 /* ============================================================
-   设计令牌 · 投流统计平台
-   来源：《前端技术方案》§8 视觉与交互规范
+   设计令牌 · 投流统计平台（单色社论版）
+   中性斜坡 #FFFFFF → #111110，暖灰中调；语义色只用于点/线/进度
    ============================================================ */
-:root {
-  /* 主色与语义色 */
-  --color-primary: #17416b;
-  --color-primary-light: #e8f0f8;
-  --color-primary-soft: #f3f7fb;
-  --color-accent: #2e6da4;
-  --color-success: #1f8a5b;
-  --color-warning: #c77c0e;
-  --color-danger: #b4372f;
+:root,
+[data-theme='light'] {
+  color-scheme: light;
 
-  /* 文本 */
-  --color-text: #1f2329;
-  --color-text-secondary: #5b6673;
-  --color-text-tertiary: #8a94a6;
+  /* ---- 中性斜坡（暖灰） ---- */
+  --ink-0: #ffffff;
+  --ink-25: #fbfaf7;
+  --ink-50: #f7f6f3;
+  --ink-75: #f2f0eb;
+  --ink-100: #e9e6df;
+  --ink-200: #dcd8cf;
+  --ink-300: #c9c4b9;
+  --ink-400: #a8a298;
+  --ink-500: #858076;
+  --ink-600: #67635b;
+  --ink-700: #4b4943;
+  --ink-800: #33312d;
+  --ink-900: #1f1e1b;
+  --ink-950: #111110;
 
-  /* 线与面 */
-  --color-border: #d3dce6;
-  --color-border-light: #e6ebf2;
-  --color-bg: #f5f7fa;
-  --color-surface: #ffffff;
-  --color-fill-light: #f7f9fc;
+  /* ---- 语义色：只允许点、图标、图表线、进度填充 ---- */
+  --signal-live: #c0392b;
+  --signal-ok: #2f7d4f;
+  --signal-warn: #b7791f;
+  --signal-danger: #b42318;
+  --signal-info: #2f5d8a;
 
-  /* 侧边导航（深蓝） */
-  --sidebar-bg: #12304f;
-  --sidebar-bg-deep: #0d2740;
-  --sidebar-text: rgba(255, 255, 255, 0.68);
-  --sidebar-text-strong: #ffffff;
-  --sidebar-hover: rgba(255, 255, 255, 0.08);
-  --sidebar-active: rgba(255, 255, 255, 0.14);
+  /* ---- 兼容别名 ---- */
+  --color-primary: var(--ink-950);
+  --color-primary-light: var(--ink-100);
+  --color-primary-soft: var(--ink-50);
+  --color-accent: var(--ink-950);
+  --color-success: var(--signal-ok);
+  --color-warning: var(--signal-warn);
+  --color-danger: var(--signal-danger);
+  --color-info: var(--signal-info);
 
-  /* 字体：标题黑体、正文无衬线、数字等宽 */
-  --font-sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-size-page-title: 20px;
-  --font-size-section: 16px;
-  --font-size-body: 14px;
-  --font-size-table: 13px;
-  --font-size-aux: 12px;
+  --color-text: var(--ink-950);
+  --color-text-secondary: var(--ink-700);
+  --color-text-tertiary: var(--ink-600);
+  --color-text-inverse: var(--ink-0);
+
+  --color-border: var(--ink-200);
+  --color-border-light: var(--ink-100);
+  --color-bg: var(--ink-25);
+  --color-surface: var(--ink-0);
+  --color-fill-light: var(--ink-50);
+  --color-hover: var(--ink-75);
+
+  /* ---- 侧边导航：近黑纯色，无渐变 ---- */
+  --sidebar-bg: var(--ink-950);
+  --sidebar-bg-deep: var(--ink-950);
+  --sidebar-text: var(--ink-300);
+  --sidebar-text-strong: var(--ink-0);
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active: rgba(255, 255, 255, 0.1);
+  --sidebar-border: #2b2a27;
+
+  /* ---- 字体 ---- */
+  --font-sans: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB',
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-cjk: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  --font-mono: 'SFMono-Regular', 'JetBrains Mono', Consolas, 'Liberation Mono', monospace;
+  --font-size-display: 56px;
+  --font-size-page-title: 28px;
+  --font-size-metric-lg: 40px;
   --font-size-metric: 28px;
-  --font-size-metric-lg: 32px;
+  --font-size-section: 20px;
+  --font-size-card: 16px;
+  --font-size-body: 14px;
+  --font-size-table: 14px;
+  --font-size-aux: 12px;
+  --font-size-micro: 11px;
+  --tracking-wide: 0.08em;
+  --tracking-tight: -0.01em;
 
-  /* 8px 基准栅格 */
-  --space-1: 8px;
-  --space-2: 16px;
-  --space-3: 24px;
-  --space-4: 32px;
-  --space-5: 40px;
+  /* ---- 4px 基准间距 ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 56px;
   --page-gutter: 24px;
   --card-padding: 20px;
   --table-row-height: 48px;
+  --shell-sidebar: 248px;
+  --shell-sidebar-collapsed: 64px;
+  --shell-topbar: 56px;
+  --shell-content-max: 1440px;
 
-  /* 圆角与阴影 */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-card: 0 1px 2px rgba(23, 65, 107, 0.03), 0 10px 30px -20px rgba(23, 65, 107, 0.22);
-  --shadow-pop: 0 16px 40px rgba(13, 39, 64, 0.16);
-  --shadow-sidebar: 4px 0 24px rgba(13, 39, 64, 0.08);
+  /* ---- 发际线、圆角、无阴影 ---- */
+  --hairline: 1px solid var(--color-border-light);
+  --hairline-strong: 1px solid var(--color-border);
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-round: 2px;
+  --shadow-card: none;
+  --shadow-pop: none;
+  --shadow-sidebar: none;
+  --focus-ring: 2px solid var(--ink-950);
+  --focus-offset: 2px;
 
-  /* Element Plus 主题覆盖 */
-  --el-color-primary: #17416b;
-  --el-color-primary-light-3: #54769a;
-  --el-color-primary-light-5: #8ba3bb;
-  --el-color-primary-light-7: #c2cfdd;
-  --el-color-primary-light-8: #d8e1eb;
-  --el-color-primary-light-9: #edf2f7;
-  --el-color-primary-dark-2: #0f2c4a;
-  --el-color-success: #1f8a5b;
-  --el-color-success-light-9: #e9f6f0;
-  --el-color-warning: #c77c0e;
-  --el-color-warning-light-9: #fcf3e2;
-  --el-color-danger: #b4372f;
-  --el-color-danger-light-9: #fbeceb;
-  --el-color-error: #b4372f;
-  --el-color-info: #6b7c93;
-  --el-text-color-primary: #1f2329;
-  --el-text-color-regular: #3e4652;
-  --el-text-color-secondary: #5b6673;
-  --el-text-color-placeholder: #9aa5b1;
-  --el-border-color: #d3dce6;
-  --el-border-color-light: #e3e9f0;
-  --el-border-color-lighter: #edf1f6;
-  --el-border-radius-base: 6px;
-  --el-border-radius-small: 4px;
-  --el-border-radius-round: 999px;
+  /* ---- 图表 ---- */
+  --chart-axis: var(--ink-600);
+  --chart-grid: var(--ink-100);
+  --chart-ink: var(--ink-950);
+  --chart-muted: var(--ink-400);
+  --chart-1: var(--ink-950);
+  --chart-2: var(--signal-info);
+  --chart-3: var(--signal-ok);
+  --chart-4: var(--signal-warn);
+  --chart-5: var(--signal-live);
+  --chart-6: var(--ink-400);
+
+  /* ---- Element Plus 映射 ---- */
+  --el-color-primary: var(--ink-950);
+  --el-color-primary-light-3: var(--ink-700);
+  --el-color-primary-light-5: var(--ink-500);
+  --el-color-primary-light-7: var(--ink-300);
+  --el-color-primary-light-8: var(--ink-200);
+  --el-color-primary-light-9: var(--ink-50);
+  --el-color-primary-dark-2: var(--ink-800);
+  --el-color-success: var(--signal-ok);
+  --el-color-success-light-9: var(--ink-50);
+  --el-color-warning: var(--signal-warn);
+  --el-color-warning-light-9: var(--ink-50);
+  --el-color-danger: var(--signal-danger);
+  --el-color-danger-light-9: var(--ink-50);
+  --el-color-error: var(--signal-danger);
+  --el-color-info: var(--ink-500);
+  --el-text-color-primary: var(--ink-950);
+  --el-text-color-regular: var(--ink-700);
+  --el-text-color-secondary: var(--ink-500);
+  --el-text-color-placeholder: var(--ink-400);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border-light);
+  --el-border-color-lighter: var(--ink-75);
+  --el-border-color-extra-light: var(--ink-50);
+  --el-border-radius-base: 2px;
+  --el-border-radius-small: 2px;
+  --el-border-radius-round: 2px;
   --el-font-family: var(--font-sans);
   --el-font-size-base: 14px;
-  --el-bg-color: #ffffff;
-  --el-bg-color-page: #f5f7fa;
-  --el-fill-color-light: #f7f9fc;
-  --el-fill-color-lighter: #fafbfd;
-  --el-mask-color: rgba(15, 33, 51, 0.45);
-  --el-box-shadow-light: 0 8px 24px rgba(13, 39, 64, 0.1);
-  --el-transition-duration: 0.18s;
+  --el-bg-color: var(--ink-0);
+  --el-bg-color-page: var(--color-bg);
+  --el-bg-color-overlay: var(--ink-0);
+  --el-fill-color: var(--ink-75);
+  --el-fill-color-light: var(--ink-50);
+  --el-fill-color-lighter: var(--ink-25);
+  --el-fill-color-blank: var(--ink-0);
+  --el-mask-color: rgba(17, 17, 16, 0.4);
+  --el-box-shadow: none;
+  --el-box-shadow-light: none;
+  --el-box-shadow-lighter: none;
+  --el-box-shadow-dark: none;
+  --el-transition-duration: 0.16s;
+  --el-disabled-bg-color: var(--ink-50);
+  --el-disabled-text-color: var(--ink-400);
+  --el-disabled-border-color: var(--ink-100);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --ink-0: #171716;
+  --ink-25: #121211;
+  --ink-50: #1d1c19;
+  --ink-75: #232220;
+  --ink-100: #2b2a27;
+  --ink-200: #383631;
+  --ink-300: #4d4a44;
+  --ink-400: #6e6a62;
+  --ink-500: #8f8a80;
+  --ink-600: #a8a298;
+  --ink-700: #c9c4b9;
+  --ink-800: #e2ded6;
+  --ink-900: #efede8;
+  --ink-950: #f5f4f1;
+
+  --color-text: var(--ink-950);
+  --color-text-secondary: var(--ink-700);
+  --color-text-tertiary: var(--ink-600);
+  --color-text-inverse: #111110;
+
+  --color-border: var(--ink-200);
+  --color-border-light: var(--ink-100);
+  --color-bg: #111110;
+  --color-surface: var(--ink-0);
+  --color-fill-light: var(--ink-50);
+  --color-hover: var(--ink-75);
+  --color-primary-light: var(--ink-100);
+  --color-primary-soft: var(--ink-50);
+
+  --sidebar-bg: #0c0c0b;
+  --sidebar-bg-deep: #0c0c0b;
+  --sidebar-text: #a8a298;
+  --sidebar-text-strong: #f5f4f1;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active: rgba(255, 255, 255, 0.1);
+  --sidebar-border: #232220;
+
+  --el-color-primary: #f5f4f1;
+  --el-color-primary-light-3: #c9c4b9;
+  --el-color-primary-light-5: #8f8a80;
+  --el-color-primary-light-7: #4d4a44;
+  --el-color-primary-light-8: #383631;
+  --el-color-primary-light-9: #1d1c19;
+  --el-color-primary-dark-2: #ffffff;
+  --el-color-success: #4f9d73;
+  --el-color-success-light-9: #1d1c19;
+  --el-color-warning: #c9963f;
+  --el-color-warning-light-9: #1d1c19;
+  --el-color-danger: #cf5b50;
+  --el-color-danger-light-9: #1d1c19;
+  --el-color-error: #cf5b50;
+  --el-color-info: #8f8a80;
+  --el-text-color-primary: #f5f4f1;
+  --el-text-color-regular: #c9c4b9;
+  --el-text-color-secondary: #a8a298;
+  --el-text-color-placeholder: #6e6a62;
+  --el-border-color: #383631;
+  --el-border-color-light: #2b2a27;
+  --el-border-color-lighter: #232220;
+  --el-border-color-extra-light: #1d1c19;
+  --el-bg-color: #171716;
+  --el-bg-color-page: #111110;
+  --el-bg-color-overlay: #171716;
+  --el-fill-color: #1d1c19;
+  --el-fill-color-light: #1d1c19;
+  --el-fill-color-lighter: #151514;
+  --el-fill-color-blank: #171716;
+  --el-mask-color: rgba(0, 0, 0, 0.65);
+  --el-disabled-bg-color: #1d1c19;
+  --el-disabled-text-color: #6e6a62;
+  --el-disabled-border-color: #2b2a27;
+
+  --shadow-card: none;
+  --shadow-pop: none;
+  --shadow-sidebar: none;
+  --focus-ring: 2px solid #f5f4f1;
+
+  --chart-axis: #a8a298;
+  --chart-grid: #2b2a27;
+  --chart-ink: #f5f4f1;
+  --chart-muted: #6e6a62;
+  --chart-1: #f5f4f1;
+  --chart-2: #7ea7cd;
+  --chart-3: #6fae8b;
+  --chart-4: #c9963f;
+  --chart-5: #cf5b50;
+  --chart-6: #8f8a80;
 }

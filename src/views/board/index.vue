@@ -69,7 +69,7 @@
         </div>
       </div>
 
-      <div class="card span-5">
+      <div class="card span-8">
         <div class="card-head">
           <div>
             <div class="card-title">地域分布</div>
@@ -81,7 +81,7 @@
         </div>
       </div>
 
-      <div class="card span-3">
+      <div class="card span-4">
         <div class="card-head">
           <div>
             <div class="card-title">性别分布</div>
@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <div class="card span-12">
+      <div class="card span-8">
         <div class="card-head">
           <div>
             <div class="card-title">计划完成率</div>
@@ -145,7 +145,7 @@ import type {
 } from '@/types'
 import { lastNDays } from '@/utils/date'
 import { abbrNumber, formatNumber, formatPercent } from '@/utils/format'
-import { barOption, donutOption, hbarOption, lineOption, PALETTE } from '@/utils/chart'
+import { barOption, chartColors, donutOption, hbarOption, lineOption } from '@/utils/chart'
 import type { EChartsOption } from 'echarts'
 
 const app = useAppStore()
@@ -231,6 +231,7 @@ const kpiCards = computed(() => {
 })
 
 const trendOption = computed(() => {
+  const colors = chartColors()
   const dates = trend.value.map((item) => item.date.slice(5))
   if (trendMetric.value === 'clicks') {
     return lineOption(
@@ -239,7 +240,7 @@ const trendOption = computed(() => {
         {
           name: '点击人数',
           data: trend.value.map((item) => Number(item.clicks)),
-          color: '#2E9C9A',
+          color: colors.palette[1],
           area: true,
         },
       ],
@@ -253,15 +254,16 @@ const trendOption = computed(() => {
     dates,
     hasTarget
       ? [
-          { name: '实际曝光', data: actual, color: '#17416B', area: true },
-          { name: '计划曝光', data: target, color: '#9DB6CD', dashed: true },
+          { name: '实际曝光', data: actual, color: colors.ink, area: true },
+          { name: '计划曝光', data: target, color: colors.muted, dashed: true },
         ]
-      : [{ name: '实际曝光', data: actual, color: '#17416B', area: true }],
+      : [{ name: '实际曝光', data: actual, color: colors.ink, area: true }],
     '次',
   )
 })
 
 const channelOption = computed(() => {
+  void chartColors()
   const items = channels.value.map((item) => ({
     name: item.dimName,
     value: Number(item.value),
@@ -284,19 +286,20 @@ const regionOption = computed(() => {
     if (other) other.value += restSum
     else top.push({ name: '其他', value: restSum })
   }
-  return hbarOption(top, '次', '#17416B')
+  return hbarOption(top, '次')
 })
 
 const genderOption = computed(() => {
+  const colors = chartColors()
   const colorMap: Record<string, string> = {
-    男: '#2E6DA4',
-    女: '#C9A227',
-    未知: '#8A94A6',
+    男: colors.palette[1],
+    女: colors.palette[3],
+    未知: colors.muted,
   }
   const items = genders.value.map((item) => ({
     name: item.dimName,
     value: Number(item.value),
-    color: colorMap[item.dimName] ?? '#6B7C93',
+    color: colorMap[item.dimName] ?? colors.muted,
   }))
   const total = items.reduce((sum, item) => sum + item.value, 0)
   return donutOption(items, {
@@ -307,6 +310,7 @@ const genderOption = computed(() => {
 })
 
 const ageOption = computed(() => {
+  const colors = chartColors()
   const items = [...ages.value].sort((a, b) => Number(b.value) - Number(a.value))
   return barOption(
     items.map((item) => item.dimName.replace('岁', '')),
@@ -314,7 +318,7 @@ const ageOption = computed(() => {
       {
         name: '曝光量',
         data: items.map((item) => Number(item.value)),
-        color: '#2E9C9A',
+        color: colors.palette[1],
       },
     ],
     '次',
@@ -322,6 +326,7 @@ const ageOption = computed(() => {
 })
 
 const completionOption = computed<EChartsOption>(() => {
+  const colors = chartColors()
   const items = [...completionItems.value]
     .filter((item) => Number(item.completionRate) > 0)
     .sort((a, b) => Number(a.completionRate) - Number(b.completionRate))
@@ -341,13 +346,13 @@ const completionOption = computed<EChartsOption>(() => {
       },
     },
     grid: { left: 8, right: 40, top: 12, bottom: 8, containLabel: true },
-    xAxis: { type: 'value', axisLabel: { formatter: '{value}%' }, splitLine: { lineStyle: { color: '#EFF3F8', type: [4, 4] } } },
+    xAxis: { type: 'value', axisLabel: { formatter: '{value}%' }, splitLine: { lineStyle: { color: colors.grid, type: [4, 4] } } },
     yAxis: {
       type: 'category',
       data: names,
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: '#5B6673', fontSize: 12 },
+      axisLabel: { color: colors.axis, fontSize: 11 },
     },
     series: [
       {
@@ -355,7 +360,7 @@ const completionOption = computed<EChartsOption>(() => {
         data: items.map((item) => ({
           value: Number((Number(item.completionRate) * 100).toFixed(2)),
           itemStyle: {
-            color: Number(item.completionRate) >= 1 ? '#1F8A5B' : '#2E6DA4',
+            color: Number(item.completionRate) >= 1 ? colors.palette[2] : colors.palette[1],
             borderRadius: [0, 5, 5, 0],
           },
         })),
@@ -364,7 +369,7 @@ const completionOption = computed<EChartsOption>(() => {
           show: true,
           position: 'right',
           formatter: (params: { value?: unknown }) => `${params.value}%`,
-          color: '#5B6673',
+          color: colors.axis,
           fontSize: 11,
         },
       },
@@ -510,10 +515,10 @@ onMounted(loadAll)
   display: inline-block;
 }
 .lg-dot.done {
-  background: #1f8a5b;
+  background: var(--signal-ok);
 }
 .lg-dot.ongoing {
-  background: #2e6da4;
+  background: var(--signal-info);
   margin-left: 8px;
 }
 
@@ -522,10 +527,10 @@ onMounted(loadAll)
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .chart-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(12, minmax(0, 1fr));
   }
   .span-8 {
-    grid-column: span 4;
+    grid-column: span 8;
   }
   .span-4 {
     grid-column: span 2;

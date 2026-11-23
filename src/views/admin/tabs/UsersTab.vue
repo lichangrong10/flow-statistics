@@ -233,7 +233,7 @@ onMounted(() => {
         <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
         <el-button :icon="RefreshLeft" @click="handleResetQuery">重置</el-button>
       </div>
-      <el-button type="primary" :icon="Plus" @click="openCreate">新增账号</el-button>
+      <el-button :icon="Plus" @click="openCreate">新增账号</el-button>
     </div>
 
     <el-table v-loading="loading" :data="rows" row-key="id" border stripe>
