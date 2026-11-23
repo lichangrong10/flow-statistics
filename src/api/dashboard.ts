@@ -13,17 +13,21 @@ import {
 
 export interface RangeQuery {
   projectId?: number
+  campaignId?: number
   from: string
   to: string
-  campaignId?: number
 }
 
-export async function getDashboardSummary(query: RangeQuery): Promise<DashboardSummary> {
+export async function getDashboardSummary(
+  query: RangeQuery & { compare?: 'previous' },
+): Promise<DashboardSummary> {
   const summary = await request<RealSummary>('GET', '/dashboard/summary', {
     params: {
       projectId: query.projectId ? String(query.projectId) : undefined,
+      campaignId: query.campaignId ? String(query.campaignId) : undefined,
       from: query.from,
       to: query.to,
+      compare: query.compare,
     },
   })
   return mapSummary(summary)
@@ -35,6 +39,7 @@ export async function getDashboardTrend(
   const points = await request<RealTrendPoint[]>('GET', '/dashboard/trend', {
     params: {
       projectId: query.projectId ? String(query.projectId) : undefined,
+      campaignId: query.campaignId ? String(query.campaignId) : undefined,
       from: query.from,
       to: query.to,
     },

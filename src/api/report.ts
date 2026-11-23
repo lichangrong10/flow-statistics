@@ -12,18 +12,27 @@ export interface CreateReportPayload {
   to: string
 }
 
+const REPORT_TYPE_MAP: Record<string, string> = {
+  final: 'campaign',
+  daily: 'daily',
+  weekly: 'weekly',
+  detail: 'detail',
+}
+
 export async function createReportTask(
   payload: CreateReportPayload,
 ): Promise<{ taskId: string | number; status: string }> {
-  const type = payload.type === 'final' ? 'campaign' : 'daily'
-  const campaignId = payload.campaignIds?.[0]
-  if (type === 'campaign' && !campaignId) {
+  const type = REPORT_TYPE_MAP[payload.type] ?? 'detail'
+  const campaignIds = payload.campaignIds ?? []
+  if (type === 'campaign' && campaignIds.length !== 1) {
     throw new Error('结案报告需要先选择一条投放计划')
   }
   const result = await request<{ id: string; status: string }>('POST', '/reports', {
     data: {
       type,
-      campaignId: type === 'campaign' ? String(campaignId) : undefined,
+      format: payload.format,
+      campaignId: type === 'campaign' ? String(campaignIds[0]) : undefined,
+      campaignIds: type === 'campaign' ? undefined : campaignIds.map(String),
       from: payload.from,
       to: payload.to,
     },

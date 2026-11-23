@@ -330,7 +330,7 @@ async function loadSummaryAndTrend() {
   const projectId = app.currentProjectId ?? undefined
   try {
     const [summaryData, trendData, channelData] = await Promise.all([
-      getDashboardSummary({ projectId, ...range }),
+      getDashboardSummary({ projectId, ...range, compare: 'previous' }),
       getDashboardTrend({ projectId, ...range, metric: trendMetric.value as 'impressions' }),
       getDashboardDimensions({ projectId, ...range, dimType: 'channel' }),
     ])

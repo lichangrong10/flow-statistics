@@ -41,7 +41,7 @@
               <el-radio-button value="xlsx">xlsx</el-radio-button>
               <el-radio-button value="pdf" :disabled="true">pdf</el-radio-button>
             </el-radio-group>
-            <span class="field-hint">演示环境暂仅提供 xlsx，PDF 版式由后端模板生成</span>
+            <span class="field-hint">xlsx 便于二次分析；后端 PDF 生成环境缺少字体，暂不可用</span>
           </div>
 
           <div class="field">
@@ -89,7 +89,8 @@
             创建导出任务
           </el-button>
           <p class="form-tip">
-            后端即时生成，完成后在右侧列表点击「下载」获取文件。结案报告需先选择一条投放计划。
+            后端即时生成，完成后在右侧列表点击「下载」获取文件。结案报告需选择且仅选择一条投放计划；
+            日报 / 周报 / 数据明细可多选计划，留空为全部计划。
           </p>
         </div>
       </div>
@@ -195,9 +196,7 @@ const total = ref(0)
 
 let timer: number | null = null
 
-const typeOptions = REPORT_TYPE_OPTIONS.filter((item) =>
-  ['final', 'detail'].includes(item.value),
-)
+const typeOptions = REPORT_TYPE_OPTIONS
 
 const form = reactive({
   type: 'detail' as ReportType,
@@ -297,6 +296,9 @@ async function createTask() {
     ElMessage.warning('请选择统计周期')
     return
   }
+  if (form.type !== 'final' && form.campaignIds.length > 1) {
+    form.campaignIds = form.campaignIds.slice(0, 1)
+  }
   if (form.type === 'final' && form.campaignIds.length !== 1) {
     ElMessage.warning('结案报告需要且仅需要选择一条投放计划')
     return
@@ -305,7 +307,7 @@ async function createTask() {
   try {
     await createReportTask({
       type: form.type,
-      format: 'xlsx',
+      format: form.format,
       projectId: app.currentProjectId ?? undefined,
       campaignIds: form.campaignIds.length ? form.campaignIds : undefined,
       from: form.range[0],

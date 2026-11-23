@@ -37,3 +37,20 @@ export async function getProfile(): Promise<UserProfile> {
   const profile = await request<RealUser>('GET', '/auth/profile')
   return mapUser(profile)
 }
+
+export interface RefreshResult {
+  token: string
+  expiresIn: number
+}
+
+export async function refreshToken(): Promise<RefreshResult> {
+  const result = await request<{ token: string; expiresIn: string | number }>(
+    'POST',
+    '/auth/refresh',
+  )
+  const expiresIn =
+    typeof result.expiresIn === 'number'
+      ? result.expiresIn
+      : Number.parseInt(result.expiresIn, 10) || 7200
+  return { token: result.token, expiresIn }
+}

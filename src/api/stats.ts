@@ -10,12 +10,23 @@ import {
 } from './real'
 import { parseFileName, saveBlob } from '@/utils/download'
 
+export interface DimPayloadItem {
+  key: string
+  name: string
+  impressions: number
+}
+
 export interface SaveStatPayload {
   statDate: string
   impressions: number
   reach: number
   clicks: number
   cost: number
+  dims?: {
+    region: DimPayloadItem[]
+    gender: DimPayloadItem[]
+    age: DimPayloadItem[]
+  }
 }
 
 export interface AdjustStatPayload {
@@ -65,16 +76,24 @@ export async function saveCampaignStats(
   id: number | string,
   payload: SaveStatPayload,
 ): Promise<{ statDate: string; dimsValid: boolean }> {
-  const result = await request<{ statDate?: string }>('POST', `/campaigns/${id}/stats`, {
-    data: {
-      statDate: payload.statDate,
-      impressions: Math.round(payload.impressions),
-      reach: Math.round(payload.reach),
-      clicks: Math.round(payload.clicks),
-      cost: payload.cost,
+  const result = await request<{ statDate?: string; dimsValid?: boolean }>(
+    'POST',
+    `/campaigns/${id}/stats`,
+    {
+      data: {
+        statDate: payload.statDate,
+        impressions: Math.round(payload.impressions),
+        reach: Math.round(payload.reach),
+        clicks: Math.round(payload.clicks),
+        cost: payload.cost,
+        dims: payload.dims,
+      },
     },
-  })
-  return { statDate: result?.statDate ?? payload.statDate, dimsValid: true }
+  )
+  return {
+    statDate: result?.statDate ?? payload.statDate,
+    dimsValid: result?.dimsValid ?? true,
+  }
 }
 
 export function adjustCampaignStat(
@@ -104,14 +123,21 @@ export async function getCampaignDimensions(
 
 export async function syncCampaign(
   id: number | string,
-): Promise<{ syncTaskId: string | number; expectedSeconds: number }> {
-  const result = await request<{ id?: string; syncTaskId?: string }>(
+): Promise<{
+  syncTaskId: string | number
+  expectedSeconds: number
+  days: number
+  added: number
+}> {
+  const result = await request<{ id?: string; syncTaskId?: string; days?: number; added?: number }>(
     'POST',
     `/campaigns/${id}/sync`,
   )
   return {
     syncTaskId: result?.syncTaskId ?? result?.id ?? `sync-${id}-${Date.now()}`,
     expectedSeconds: 2,
+    days: Number(result?.days ?? 0),
+    added: Number(result?.added ?? 0),
   }
 }
 

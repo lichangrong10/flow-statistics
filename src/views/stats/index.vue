@@ -78,6 +78,61 @@
                 </div>
               </div>
 
+              <div class="dims-toggle">
+                <el-switch v-model="useDims" />
+                <span>同时录入人群分布（地域 / 性别 / 年龄，合计需等于曝光量）</span>
+              </div>
+
+              <div v-if="useDims" class="dims-tables">
+                <div class="dim-block">
+                  <div class="dim-title">地域分布（曝光量）</div>
+                  <div class="dim-grid">
+                    <div v-for="(region, index) in REGION_ROWS" :key="region" class="dim-row">
+                      <span class="dim-name">{{ region }}</span>
+                      <el-input-number v-model="dims.region[index]" :min="0" :controls="false" size="small" style="width: 100%" />
+                    </div>
+                  </div>
+                  <div class="dim-sum" :class="{ bad: regionSum !== Number(form.impressions) }">
+                    合计 {{ formatNumber(regionSum) }}
+                    <span v-if="regionSum !== Number(form.impressions)">
+                      差额 {{ formatNumber(Number(form.impressions) - regionSum) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="dim-block">
+                  <div class="dim-title">性别分布（曝光量）</div>
+                  <div class="dim-grid single">
+                    <div v-for="(gender, index) in GENDER_ROWS" :key="gender" class="dim-row">
+                      <span class="dim-name">{{ gender }}</span>
+                      <el-input-number v-model="dims.gender[index]" :min="0" :controls="false" size="small" style="width: 100%" />
+                    </div>
+                  </div>
+                  <div class="dim-sum" :class="{ bad: genderSum !== Number(form.impressions) }">
+                    合计 {{ formatNumber(genderSum) }}
+                    <span v-if="genderSum !== Number(form.impressions)">
+                      差额 {{ formatNumber(Number(form.impressions) - genderSum) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="dim-block">
+                  <div class="dim-title">年龄分布（曝光量）</div>
+                  <div class="dim-grid single">
+                    <div v-for="(age, index) in AGE_ROWS" :key="age" class="dim-row">
+                      <span class="dim-name">{{ age }}</span>
+                      <el-input-number v-model="dims.age[index]" :min="0" :controls="false" size="small" style="width: 100%" />
+                    </div>
+                  </div>
+                  <div class="dim-sum" :class="{ bad: ageSum !== Number(form.impressions) }">
+                    合计 {{ formatNumber(ageSum) }}
+                    <span v-if="ageSum !== Number(form.impressions)">
+                      差额 {{ formatNumber(Number(form.impressions) - ageSum) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
 
 
               <div v-if="manualError" class="form-error">{{ manualError }}</div>
@@ -308,6 +363,20 @@ const form = reactive({
 const saving = ref(false)
 const manualError = ref('')
 
+const REGION_ROWS = ['江苏省', '上海市', '浙江省', '广东省', '安徽省', '山东省', '北京市', '其他']
+const GENDER_ROWS = ['男', '女', '未知']
+const AGE_ROWS = ['18-24', '25-29', '30-39', '40-49', '50 岁以上']
+
+const useDims = ref(false)
+const dims = reactive({
+  region: REGION_ROWS.map(() => 0),
+  gender: GENDER_ROWS.map(() => 0),
+  age: AGE_ROWS.map(() => 0),
+})
+const regionSum = computed(() => dims.region.reduce((sum, value) => sum + (value || 0), 0))
+const genderSum = computed(() => dims.gender.reduce((sum, value) => sum + (value || 0), 0))
+const ageSum = computed(() => dims.age.reduce((sum, value) => sum + (value || 0), 0))
+
 const costText = computed({
   get: () => (form.cost ? form.cost.toFixed(2) : ''),
   set: (value: string) => {
@@ -324,11 +393,14 @@ const clickRate = computed(() =>
   form.reach > 0 ? form.clicks / form.reach : null,
 )
 
+const dailyBudget = computed(() => Number(selectedCampaign.value?.dailyBudget ?? 0))
+const overBudget = computed(
+  () => dailyBudget.value > 0 && form.cost > dailyBudget.value * 1.1,
+)
 const budgetWarning = computed(() => {
-  if (!selectedCampaign.value) return ''
-  const dailyBudget = Number(selectedCampaign.value.targetImpressions) ? 0 : 0
-  void dailyBudget
-  return ''
+  if (!overBudget.value) return ''
+  const percent = (form.cost / dailyBudget.value) * 100
+  return `单日消耗已达日预算的 ${percent.toFixed(0)}%，超过 110% 需二次确认`
 })
 
 const importFileName = ref('')
@@ -430,6 +502,10 @@ function resetManual() {
   form.reach = 0
   form.clicks = 0
   form.cost = 0
+  useDims.value = false
+  dims.region = REGION_ROWS.map(() => 0)
+  dims.gender = GENDER_ROWS.map(() => 0)
+  dims.age = AGE_ROWS.map(() => 0)
   manualError.value = ''
 }
 
@@ -451,6 +527,31 @@ async function submitManual() {
     manualError.value = '点击人数不应大于曝光人数，请核对数据来源'
     return
   }
+  if (useDims.value) {
+    if (regionSum.value !== form.impressions) {
+      manualError.value = `地域分布合计与曝光量相差 ${formatNumber(form.impressions - regionSum.value)}，请检查后提交`
+      return
+    }
+    if (genderSum.value !== form.impressions) {
+      manualError.value = `性别分布合计与曝光量相差 ${formatNumber(form.impressions - genderSum.value)}，请检查后提交`
+      return
+    }
+    if (ageSum.value !== form.impressions) {
+      manualError.value = `年龄分布合计与曝光量相差 ${formatNumber(form.impressions - ageSum.value)}，请检查后提交`
+      return
+    }
+  }
+  if (overBudget.value) {
+    try {
+      await ElMessageBox.confirm(
+        `单日消耗 ¥${form.cost.toFixed(2)} 已超过日预算 ¥${dailyBudget.value.toFixed(2)} 的 110%，确认继续保存？`,
+        '消耗异常确认',
+        { confirmButtonText: '继续保存', cancelButtonText: '返回修改', type: 'warning' },
+      )
+    } catch {
+      return
+    }
+  }
   saving.value = true
   try {
     await saveCampaignStats(form.campaignId, {
@@ -459,6 +560,25 @@ async function submitManual() {
       reach: form.reach,
       clicks: form.clicks,
       cost: form.cost,
+      dims: useDims.value
+        ? {
+            region: REGION_ROWS.map((name, index) => ({
+              key: name,
+              name,
+              impressions: dims.region[index] || 0,
+            })),
+            gender: GENDER_ROWS.map((name, index) => ({
+              key: name,
+              name,
+              impressions: dims.gender[index] || 0,
+            })),
+            age: AGE_ROWS.map((name, index) => ({
+              key: name,
+              name,
+              impressions: dims.age[index] || 0,
+            })),
+          }
+        : undefined,
     })
     ElMessage.success('数据已保存，重复录入将覆盖原记录')
     await loadCampaigns()

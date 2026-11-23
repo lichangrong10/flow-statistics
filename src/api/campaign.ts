@@ -16,6 +16,22 @@ interface RealPage<T> {
   pageSize: number
 }
 
+/** 后端 regions 为字符串数组（「省/市」或「省」） */
+function toRegionStrings(targeting: CampaignDraftPayload['targeting']): string[] {
+  return targeting.regions.map((region) =>
+    region.city ? `${region.province}/${region.city}` : region.province,
+  )
+}
+
+function toTargeting(targeting: CampaignDraftPayload['targeting']) {
+  return {
+    regions: toRegionStrings(targeting),
+    gender: targeting.gender,
+    ageRanges: targeting.ageRanges,
+    interests: targeting.interests,
+  }
+}
+
 function toCreateBody(
   payload: CampaignDraftPayload,
   channel: CampaignDraftPayload['channels'][number],
@@ -27,10 +43,13 @@ function toCreateBody(
     channel,
     objective: payload.goal,
     budget: Number(payload.totalBudget),
+    dailyBudget: payload.dailyBudget ? Number(payload.dailyBudget) : undefined,
+    bidType: payload.bidType,
+    contractNo: payload.contractNo || undefined,
     targetImpressions: Number(payload.targetImpressions),
     startDate: payload.startDate,
     endDate: payload.endDate,
-    targeting: payload.targeting,
+    targeting: toTargeting(payload.targeting),
     remark: payload.remark || undefined,
     vendorIds: payload.vendorIds.map((id) => String(id)),
   }
@@ -108,11 +127,15 @@ export async function updateCampaign(
     channel,
     objective: payload.goal,
     budget: payload.totalBudget !== undefined ? Number(payload.totalBudget) : undefined,
+    dailyBudget:
+      payload.dailyBudget !== undefined ? Number(payload.dailyBudget) : undefined,
+    bidType: payload.bidType,
+    contractNo: payload.contractNo,
     targetImpressions:
       payload.targetImpressions !== undefined ? Number(payload.targetImpressions) : undefined,
     startDate: payload.startDate,
     endDate: payload.endDate,
-    targeting: payload.targeting,
+    targeting: payload.targeting ? toTargeting(payload.targeting) : undefined,
     remark: payload.remark,
     vendorIds: payload.vendorIds?.map((item) => String(item)),
   }

@@ -55,16 +55,26 @@ export interface RealCampaign {
   code: string | null
   name: string
   channel: ChannelCode
+  channelName?: string
   objective: CampaignGoal
   status: CampaignStatus
   budget: string
+  dailyBudget?: string | null
+  bidType?: 'cpm' | 'cpc' | null
+  contractNo?: string | null
   targetImpressions: string
   startDate: string
   endDate: string
   targeting?: Partial<Targeting>
   remark?: string | null
   createdBy?: string
+  creatorName?: string | null
   publishedAt?: string | null
+  submittedAt?: string | null
+  finishedAt?: string | null
+  closedAt?: string | null
+  reportNo?: string | null
+  dataUpdatedAt?: string | null
   createdAt?: string
   updatedAt?: string
   vendors?: RealVendor[]
@@ -73,6 +83,7 @@ export interface RealCampaign {
   actualClicks?: string | null
   actualCost?: string | null
   completionRate?: number | null
+  clickRate?: number | null
 }
 
 export interface RealDailyRow {
@@ -101,6 +112,7 @@ export interface RealStats {
 }
 
 export interface RealDimItem {
+  statDate?: string
   dimType: DimType
   dimValue: string
   impressions: string
@@ -112,6 +124,7 @@ export interface RealDims {
   campaignId?: string
   items: RealDimItem[]
   grouped?: Record<string, RealDimItem[]>
+  totals?: { impressions?: string; reach?: string; clicks?: string }
 }
 
 export interface RealSummary {
@@ -125,6 +138,7 @@ export interface RealSummary {
   completionRate: number | null
   clickRate: number | null
   cpm: number | null
+  compare?: RealSummary | null
 }
 
 export interface RealTrendPoint {
@@ -133,19 +147,24 @@ export interface RealTrendPoint {
   reach: string
   clicks: string
   cost: string
+  target?: string | null
 }
 
 export interface RealChannel {
   channel: string
+  channelName?: string
   impressions: string
 }
 
 export interface RealReport {
   id: string
-  type: 'campaign' | 'daily'
+  type: 'campaign' | 'daily' | 'weekly' | 'detail'
+  format?: 'xlsx' | 'pdf'
   campaignId: string | null
+  campaignIds?: string[] | null
   status: 'pending' | 'running' | 'success' | 'failed'
   fileName: string
+  fileSize?: number
   createdAt: string
   finishedAt: string | null
 }
@@ -153,10 +172,14 @@ export interface RealReport {
 export interface RealSyncTask {
   id: string
   campaignId: string
+  campaignName?: string | null
   triggerType: 'manual' | 'schedule'
   adapter?: string
   status: 'running' | 'success' | 'failed'
   rowsAffected?: number
+  days?: number
+  added?: number
+  durationMs?: number
   message: string | null
   startedAt: string
   finishedAt?: string | null
@@ -194,6 +217,8 @@ export interface RealProject {
   startDate?: string
   endDate?: string
   budget: string
+  usedBudget?: string
+  remainingBudget?: string
   createdAt?: string
 }
 
@@ -219,9 +244,18 @@ function toFixed4(value: number | null | undefined): string | null {
   return Number(value).toFixed(4)
 }
 
-function defaultTargeting(targeting?: Partial<Targeting>): Targeting {
+type RawRegion = string | { province: string; city?: string }
+
+function normalizeTargeting(targeting?: Partial<Targeting> & { regions?: RawRegion[] }): Targeting {
+  const regions = ((targeting?.regions ?? []) as RawRegion[]).map((item) => {
+    if (typeof item === 'string') {
+      const [province, city] = item.split('/')
+      return city ? { province, city } : { province }
+    }
+    return item
+  })
   return {
-    regions: targeting?.regions ?? [],
+    regions,
     gender: targeting?.gender ?? 'all',
     ageRanges: targeting?.ageRanges ?? [],
     interests: targeting?.interests ?? [],
@@ -270,6 +304,15 @@ export function mapVendor(vendor: RealVendor): Vendor {
 }
 
 export function mapProject(project: RealProject, usedBudget = 0): Project {
+  const total = num(project.budget)
+  const used =
+    project.usedBudget !== undefined
+      ? num(project.usedBudget)
+      : usedBudget
+  const remaining =
+    project.remainingBudget !== undefined
+      ? str(project.remainingBudget, '0.00')
+      : Math.max(0, total - used).toFixed(2)
   return {
     id: Number(project.id),
     name: project.name,
@@ -277,7 +320,8 @@ export function mapProject(project: RealProject, usedBudget = 0): Project {
     startDate: project.startDate ?? '',
     endDate: project.endDate ?? '',
     totalBudget: str(project.budget, '0.00'),
-    usedBudget: usedBudget.toFixed(2),
+    usedBudget: used.toFixed(2),
+    remainingBudget: remaining,
     status: 'active',
   }
 }
@@ -300,7 +344,10 @@ export function mapCampaignListItem(campaign: RealCampaign): CampaignListItem {
     projectId: Number(campaign.projectId),
     projectName: campaign.projectName ?? '',
     channel: campaign.channel,
-    channelName: CHANNEL_META[campaign.channel]?.label ?? campaign.channel,
+    channelName:
+      campaign.channelName ??
+      CHANNEL_META[campaign.channel]?.label ??
+      campaign.channel,
     vendors: (campaign.vendors ?? []).map((vendor) => ({
       id: Number(vendor.id),
       name: vendor.name,
@@ -311,10 +358,11 @@ export function mapCampaignListItem(campaign: RealCampaign): CampaignListItem {
     endDate: campaign.endDate,
     dayIndex: campaign.status === 'running' ? dayIndex(campaign.startDate) : null,
     targetImpressions: String(target),
+    dailyBudget: str(campaign.dailyBudget, '0.00'),
     impressions: String(impressions),
     completionRate: toFixed4(completion),
     isMock: impressions > 0,
-    ownerName: '',
+    ownerName: campaign.creatorName ?? '',
     createdAt: campaign.createdAt ?? '',
     updatedAt: campaign.updatedAt ?? campaign.createdAt ?? '',
   }
@@ -329,20 +377,32 @@ export function mapCampaignDetail(campaign: RealCampaign): CampaignDetail {
   )
   return {
     ...base,
+    reach: str(campaign.actualReach),
+    clicks: str(campaign.actualClicks),
+    cost: str(campaign.actualCost, '0.00'),
+    clickRate:
+      campaign.clickRate === null || campaign.clickRate === undefined
+        ? ''
+        : String(campaign.clickRate),
     budget: str(campaign.budget, '0.00'),
-    dailyBudget: (totalBudget / days).toFixed(2),
+    dailyBudget: campaign.dailyBudget
+      ? str(campaign.dailyBudget, '0.00')
+      : (totalBudget / days).toFixed(2),
     goal: campaign.objective,
-    bidType: 'cpm',
-    contractNo: null,
+    bidType: campaign.bidType ?? 'cpm',
+    contractNo: campaign.contractNo ?? null,
     remark: campaign.remark ?? null,
-    targeting: defaultTargeting(campaign.targeting),
-    creator: { id: Number(campaign.createdBy ?? 0), name: '—' },
-    submittedAt: null,
+    targeting: normalizeTargeting(campaign.targeting),
+    creator: {
+      id: Number(campaign.createdBy ?? 0),
+      name: campaign.creatorName ?? '—',
+    },
+    submittedAt: campaign.submittedAt ?? null,
     publishedAt: campaign.publishedAt ?? null,
-    finishedAt: null,
-    closedAt: null,
-    reportNo: null,
-    dataUpdatedAt: null,
+    finishedAt: campaign.finishedAt ?? null,
+    closedAt: campaign.closedAt ?? null,
+    reportNo: campaign.reportNo ?? null,
+    dataUpdatedAt: campaign.dataUpdatedAt ?? null,
     mockProfile: null,
     materials: [],
   }
@@ -363,16 +423,32 @@ export function mapDailyStats(stats: RealStats): DailyStat[] {
 }
 
 export function mapDimItems(items: RealDimItem[]): DimStat[] {
-  const total = items.reduce((sum, item) => sum + num(item.impressions), 0)
-  return items
+  const merged = new Map<string, { dimType: DimType; dimName: string; impressions: number; clicks: number; reach: number }>()
+  for (const item of items ?? []) {
+    const key = `${item.dimType}|${item.dimValue}`
+    const current = merged.get(key) ?? {
+      dimType: item.dimType,
+      dimName: item.dimValue,
+      impressions: 0,
+      clicks: 0,
+      reach: 0,
+    }
+    current.impressions += num(item.impressions)
+    current.clicks += num(item.clicks)
+    current.reach += num(item.reach)
+    merged.set(key, current)
+  }
+  const list = [...merged.values()]
+  const total = list.reduce((sum, item) => sum + item.impressions, 0)
+  return list
     .map((item) => ({
       dimType: item.dimType,
-      dimKey: item.dimValue,
-      dimName: item.dimValue,
-      impressions: str(item.impressions),
-      clicks: str(item.clicks),
-      reach: str(item.reach),
-      ratio: total ? (num(item.impressions) / total).toFixed(4) : '0',
+      dimKey: item.dimName,
+      dimName: item.dimName,
+      impressions: String(item.impressions),
+      clicks: String(item.clicks),
+      reach: String(item.reach),
+      ratio: total ? (item.impressions / total).toFixed(4) : '0',
     }))
     .sort((a, b) => num(b.impressions) - num(a.impressions))
 }
@@ -392,7 +468,29 @@ export function mapSummary(summary: RealSummary): DashboardSummary {
         : String(summary.clickRate),
     runningCampaigns: summary.runningCampaigns ?? 0,
     dataUpdatedAt: summary.dataUpdatedAt ?? '',
-    compare: undefined,
+    compare: summary.compare
+      ? {
+          targetImpressions: str(summary.compare.targetImpressions),
+          impressions: str(summary.compare.impressions),
+          completionRate:
+            summary.compare.completionRate === null ||
+            summary.compare.completionRate === undefined
+              ? null
+              : String(summary.compare.completionRate),
+          reach: str(summary.compare.reach),
+          clickRate:
+            summary.compare.clickRate === null ||
+            summary.compare.clickRate === undefined
+              ? ''
+              : String(summary.compare.clickRate),
+          runningCampaigns: summary.compare.runningCampaigns ?? 0,
+          cost: str(summary.compare.cost, '0.00'),
+          cpm:
+            summary.compare.cpm === null || summary.compare.cpm === undefined
+              ? null
+              : String(summary.compare.cpm),
+        }
+      : undefined,
   }
 }
 
@@ -400,7 +498,7 @@ export function mapTrend(points: RealTrendPoint[]): TrendPoint[] {
   return (points ?? []).map((point) => ({
     date: point.statDate,
     actual: str(point.impressions),
-    target: '0',
+    target: str(point.target),
     clicks: str(point.clicks),
   }))
 }
@@ -408,7 +506,10 @@ export function mapTrend(points: RealTrendPoint[]): TrendPoint[] {
 export function mapChannels(channels: RealChannel[]): DimensionValue[] {
   const list = (channels ?? []).map((item) => ({
     dimKey: item.channel,
-    dimName: CHANNEL_META[item.channel as ChannelCode]?.label ?? item.channel,
+    dimName:
+      item.channelName ??
+      CHANNEL_META[item.channel as ChannelCode]?.label ??
+      item.channel,
     value: str(item.impressions),
     ratio: '0',
   }))
@@ -419,20 +520,29 @@ export function mapChannels(channels: RealChannel[]): DimensionValue[] {
   }))
 }
 
+const REPORT_TYPE_MAP: Record<string, ReportTask['type']> = {
+  campaign: 'final',
+  daily: 'daily',
+  weekly: 'weekly',
+  detail: 'detail',
+}
+
 export function mapReportTask(report: RealReport): ReportTask {
-  const label = report.type === 'campaign' ? '结案报告' : '数据明细'
-  const stamp = dayjs(report.createdAt).format('YYYYMMDD-HHmm')
+  const type = REPORT_TYPE_MAP[report.type] ?? 'detail'
+  const campaignIds = (report.campaignIds ?? []).map((id) => Number(id))
+  if (!campaignIds.length && report.campaignId) campaignIds.push(Number(report.campaignId))
   return {
     id: report.id,
-    type: report.type === 'campaign' ? 'final' : 'detail',
-    format: 'xlsx',
+    type,
+    campaignId: report.campaignId ? Number(report.campaignId) : null,
+    format: report.format ?? 'xlsx',
     status: report.status,
-    fileName: `${label}_${stamp}.xlsx`,
-    fileSize: 0,
+    fileName: report.fileName || `report-${report.id}.xlsx`,
+    fileSize: report.fileSize ?? 0,
     createdAt: report.createdAt,
     finishedAt: report.finishedAt,
     message: null,
-    campaignIds: report.campaignId ? [Number(report.campaignId)] : [],
+    campaignIds,
   }
 }
 
@@ -445,10 +555,13 @@ export function mapSyncTask(
   return {
     id: task.id,
     campaignId: Number(task.campaignId),
-    campaignName: campaignNames[task.campaignId] ?? `计划 #${task.campaignId}`,
+    campaignName:
+      task.campaignName ?? campaignNames[task.campaignId] ?? `计划 #${task.campaignId}`,
     triggerType: task.triggerType,
     startedAt: started,
-    durationMs: Math.max(0, dayjs(finished).diff(dayjs(started), 'millisecond')),
+    durationMs:
+      task.durationMs ??
+      Math.max(0, dayjs(finished).diff(dayjs(started), 'millisecond')),
     status: task.status,
     message: task.message ?? (task.rowsAffected ? `影响 ${task.rowsAffected} 行` : null),
   }

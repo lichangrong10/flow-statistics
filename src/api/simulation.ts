@@ -81,6 +81,15 @@ export async function generateMockData(
   return { days, written: Number(result?.written ?? days) }
 }
 
+export async function clearMockData(
+  campaignId: number | string,
+): Promise<{ cleared: boolean; deletedDays: number }> {
+  return request<{ cleared: boolean; deletedDays: number }>(
+    'DELETE',
+    `/campaigns/${campaignId}/stats`,
+  )
+}
+
 /* ------------------------------------------------------------------ */
 /* 审计日志                                                             */
 /* ------------------------------------------------------------------ */

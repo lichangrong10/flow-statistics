@@ -52,6 +52,7 @@ export interface Project {
   endDate: string
   totalBudget: string
   usedBudget: string
+  remainingBudget?: string
   status: 'active' | 'closed'
 }
 
@@ -95,6 +96,7 @@ export interface CampaignListItem {
   endDate: string
   dayIndex: number | null
   targetImpressions: string
+  dailyBudget?: string
   impressions: string
   completionRate: string | null
   isMock: boolean
@@ -104,6 +106,10 @@ export interface CampaignListItem {
 }
 
 export interface CampaignDetail extends CampaignListItem {
+  reach: string
+  clicks: string
+  cost: string
+  clickRate: string
   budget: string
   dailyBudget: string
   goal: CampaignGoal
@@ -207,6 +213,7 @@ export interface SyncTask {
 export interface ReportTask {
   id: string | number
   type: ReportType
+  campaignId?: number | null
   format: 'xlsx' | 'pdf'
   status: ReportStatus
   fileName: string
@@ -231,6 +238,7 @@ export interface AuditLog {
 
 export interface DashboardSummary {
   targetImpressions: string
+  dailyBudget?: string
   impressions: string
   completionRate: string | null
   reach: string
@@ -244,6 +252,8 @@ export interface DashboardSummary {
     reach: string
     clickRate: string
     runningCampaigns: number
+    cost?: string
+    cpm?: string | null
   }
 }
 

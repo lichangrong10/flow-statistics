@@ -70,7 +70,7 @@ VENDORS = [
 # desiredStatus, profile(ctr,cpm,frequency,seed), generate
 PLANS = [
     ("全域融数品牌曝光主计划", "douyin", "impression", 360000, 16880000, -13, 16,
-     ["V-DY-001", "V-DY-006"], "running", (0.0115, 12, 86.96, 1024), True),
+     ["V-DY-001", "V-DY-006"], "running", (0.0115, 11.8281, 86.9564, 1024), True),
     ("朋友圈品牌曝光计划", "wechat", "impression", 45000, 1800000, -9, 6,
      ["V-WX-002"], "running", (0.0092, 18, 55, 1025), True),
     ("小红书种草达人合作", "xiaohongshu", "click", 30000, 900000, -6, 8,
@@ -88,6 +88,15 @@ PLANS = [
     ("双十二素材测试计划", "xiaohongshu", "lead", 16000, 80000, 2, 12,
      ["V-XHS-003"], "draft", None, False),
 ]
+
+DAILY_BUDGET = {
+    "全域融数品牌曝光主计划": 16000, "朋友圈品牌曝光计划": 3000, "小红书种草达人合作": 2000,
+    "抖音信息流补量计划": 4000, "快手双十二预热排期": 3500, "抖音品牌挑战赛二期": 6000,
+    "双十一大促收官计划": 16000, "十月品牌月报计划": 12000, "双十二素材测试计划": 2000,
+}
+
+# 验收材料数字：主计划目标 16,880,000，实际 17,125,369（生成基准），曝光人数 ~196,942
+GENERATION_BASE = {"全域融数品牌曝光主计划": 17125369}
 
 CHAINS = {
     "running": ["submit", "approve", "publish"],
@@ -163,11 +172,14 @@ def ensure_campaigns(project: dict, vendors: dict[str, dict]) -> dict[str, dict]
             "startDate": day(start),
             "endDate": day(end),
             "targeting": {
-                "regions": [{"province": "江苏省", "city": "苏州市"}, {"province": "上海市"}],
+                "regions": ["江苏省/苏州市", "上海市"],
                 "gender": "all",
                 "ageRanges": ["25-29", "30-39", "40-49"],
                 "interests": ["数码家电", "旅游出行"],
             },
+            "dailyBudget": DAILY_BUDGET.get(name, 3000),
+            "bidType": "cpm",
+            "contractNo": f"HT-2026-TC-{len(existing) + len(vendors):04d}",
             "remark": "演示数据",
             "vendorIds": [vendors[code]["id"] for code in vendor_codes if code in vendors],
         })
@@ -191,8 +203,9 @@ def advance(plan: dict, desired: str) -> None:
 
 def generate(plan: dict, profile: tuple[float, float, float, int], start: str, end: str) -> None:
     ctr, cpm, frequency, seed = profile
+    base = GENERATION_BASE.get(plan["name"], int(plan["targetImpressions"]))
     call("PUT", f"/campaigns/{plan['id']}/mock-profile", {
-        "totalImpressions": int(plan["targetImpressions"]),
+        "totalImpressions": base,
         "curveType": "uniform",
         "ctr": ctr,
         "cpm": cpm,

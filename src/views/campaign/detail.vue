@@ -390,7 +390,7 @@ import {
   getCampaignStats,
   syncCampaign,
 } from '@/api/stats'
-import { generateMockData, getAuditLogs, getMockProfile } from '@/api/simulation'
+import { clearMockData, generateMockData, getAuditLogs, getMockProfile } from '@/api/simulation'
 import type {
   AuditLog,
   CampaignDetail,
@@ -610,6 +610,9 @@ const headerActions = computed(() => {
     list.push({ key: 'sync', label: '同步数据' })
     if (admin) list.push({ key: 'mock', label: '生成模拟数据' })
   }
+  if (admin && Number(detail.value.impressions) > 0) {
+    list.push({ key: 'clear', label: '清空数据', danger: true })
+  }
   return list
 })
 
@@ -749,7 +752,19 @@ async function onAction(key: string) {
         cancelButtonText: '取消',
       })
       const result = await syncCampaign(id)
-      ElMessage.success(`同步完成：已同步数据，任务号 ${result.syncTaskId}`)
+      const added = result.added > 0 ? `，其中新增 ${result.added} 天` : ''
+      ElMessage.success(`同步完成：已同步 ${result.days} 天数据${added}`)
+      await loadDetail()
+      return
+    }
+    if (key === 'clear') {
+      await ElMessageBox.confirm(
+        '将删除该计划的全部分日与人群数据（不可恢复），确认继续？',
+        '清空模拟数据',
+        { confirmButtonText: '清空', cancelButtonText: '取消', type: 'warning' },
+      )
+      const result = await clearMockData(id)
+      ElMessage.success(`已清空 ${result.deletedDays} 天数据`)
       await loadDetail()
       return
     }

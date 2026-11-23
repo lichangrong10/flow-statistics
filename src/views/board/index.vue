@@ -21,23 +21,6 @@
         />
       </div>
       <div class="field">
-        <span class="field-label">投放计划</span>
-        <el-select
-          v-model="campaignId"
-          clearable
-          placeholder="全部计划"
-          filterable
-          style="width: 240px"
-        >
-          <el-option
-            v-for="item in campaignOptions"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </div>
-      <div class="field">
         <span class="field-label">对比口径</span>
         <el-tag type="info" effect="plain" class="tip-tag">
           曝光人数为区间内累计触达（不去重）
@@ -90,7 +73,7 @@
         <div class="card-head">
           <div>
             <div class="card-title">地域分布</div>
-            <div class="card-sub">计划全周期累计，Top 10 省份 / 地市</div>
+            <div class="card-sub">所选周期累计，Top 10 省份 / 地市，其余归入「其他」</div>
           </div>
         </div>
         <div class="card-body">
@@ -102,7 +85,7 @@
         <div class="card-head">
           <div>
             <div class="card-title">性别分布</div>
-            <div class="card-sub">计划全周期累计 · 男 / 女 / 未知</div>
+            <div class="card-sub">所选周期累计 · 男 / 女 / 未知</div>
           </div>
         </div>
         <div class="card-body">
@@ -114,7 +97,7 @@
         <div class="card-head">
           <div>
             <div class="card-title">年龄分布</div>
-            <div class="card-sub">计划全周期累计 · 按曝光量降序</div>
+            <div class="card-sub">所选周期累计 · 按曝光量降序</div>
           </div>
         </div>
         <div class="card-body">
@@ -171,7 +154,6 @@ const dateRange = ref<[string, string]>([
   lastNDays(14).from,
   lastNDays(14).to,
 ])
-const campaignId = ref<number | null>(null)
 const trendMetric = ref('impressions')
 
 const summary = ref<DashboardSummary | null>(null)
@@ -181,7 +163,6 @@ const regions = ref<DimensionValue[]>([])
 const genders = ref<DimensionValue[]>([])
 const ages = ref<DimensionValue[]>([])
 const completionItems = ref<CampaignListItem[]>([])
-const campaignOptions = ref<CampaignListItem[]>([])
 
 const loadingSummary = ref(true)
 const loadingTrend = ref(true)
@@ -293,13 +274,18 @@ const channelOption = computed(() => {
   })
 })
 
-const regionOption = computed(() =>
-  hbarOption(
-    regions.value.map((item) => ({ name: item.dimName, value: Number(item.value) })),
-    '次',
-    '#17416B',
-  ),
-)
+const regionOption = computed(() => {
+  const sorted = [...regions.value].sort((a, b) => Number(b.value) - Number(a.value))
+  const top = sorted.slice(0, 10).map((item) => ({ name: item.dimName, value: Number(item.value) }))
+  const rest = sorted.slice(10)
+  if (rest.length) {
+    const restSum = rest.reduce((sum, item) => sum + Number(item.value), 0)
+    const other = top.find((item) => item.name === '其他')
+    if (other) other.value += restSum
+    else top.push({ name: '其他', value: restSum })
+  }
+  return hbarOption(top, '次', '#17416B')
+})
 
 const genderOption = computed(() => {
   const colorMap: Record<string, string> = {
@@ -316,7 +302,7 @@ const genderOption = computed(() => {
   return donutOption(items, {
     unit: '次',
     centerValue: abbrNumber(total),
-    centerLabel: '全周期曝光',
+    centerLabel: '周期曝光',
   })
 })
 
@@ -391,14 +377,13 @@ function rangeParams() {
     projectId: app.currentProjectId ?? undefined,
     from: dateRange.value[0],
     to: dateRange.value[1],
-    campaignId: campaignId.value ?? undefined,
   }
 }
 
 async function loadSummary() {
   loadingSummary.value = true
   try {
-    summary.value = await getDashboardSummary({ ...rangeParams() })
+    summary.value = await getDashboardSummary({ ...rangeParams(), compare: 'previous' })
   } catch {
     summary.value = null
   } finally {
@@ -441,7 +426,6 @@ async function loadCompletion() {
       page: 1,
       pageSize: 50,
     })
-    campaignOptions.value = data.items
     completionItems.value = data.items.filter((item) => Number(item.targetImpressions) > 0)
   } catch {
     completionItems.value = []
@@ -467,7 +451,6 @@ function onSearch() {
 function onReset() {
   const range = lastNDays(14)
   dateRange.value = [range.from, range.to]
-  campaignId.value = null
   trendMetric.value = 'impressions'
   loadAll()
 }
