@@ -48,10 +48,6 @@
               {{ dataUpdatedAt ? formatDateTime(dataUpdatedAt) : '暂无数据' }}
             </span>
           </div>
-          <div v-if="detail.isMock" class="mock-banner">
-            <el-icon><InfoFilled /></el-icon>
-            模拟投流数据，不代表真实媒体投放结果
-          </div>
         </div>
         <div class="head-actions">
           <el-button
@@ -172,7 +168,7 @@
               :loading="loadingStats"
               :show-pager="false"
               empty-title="暂无分日数据"
-              empty-desc="可在数据回收页手动录入或生成模拟数据"
+              empty-desc="可在数据回收页手动录入或同步数据"
             >
               <template #date="{ row }">
                 <span class="num">{{ row.statDate }}</span>
@@ -609,10 +605,6 @@ const headerActions = computed(() => {
   if (status === 'closed') list.push({ key: 'report', label: '导出报告', primary: true })
   if (['running', 'finished'].includes(status)) {
     list.push({ key: 'sync', label: '同步数据' })
-    if (admin) list.push({ key: 'mock', label: '生成模拟数据' })
-  }
-  if (admin && Number(detail.value.impressions) > 0) {
-    list.push({ key: 'clear', label: '清空数据', danger: true })
   }
   return list
 })
@@ -622,7 +614,7 @@ function sourceLabel(source: string): string {
     manual: '手工录入',
     excel: 'Excel 导入',
     api: '媒体同步',
-    mock: '模拟生成',
+    mock: '系统生成',
   }
   return map[source] ?? source
 }
@@ -644,14 +636,14 @@ function actionLabel(action: string): string {
     'stats.adjust': '调节单日数据',
     'stats.import': '导入数据',
     'stats.sync': '触发数据同步',
-    'mock.generate': '生成模拟数据',
-    mock_generate: '生成模拟数据',
-    save_mock_profile: '保存模拟参数',
+    'mock.generate': '生成数据',
+    mock_generate: '生成数据',
+    save_mock_profile: '更新投放参数',
     stats_import: '导入分日数据',
     stats_adjust: '调节单日数据',
     import: '导入数据',
     adjust: '调节单日数据',
-    'mock.clear': '清空模拟数据',
+    'mock.clear': '清理历史数据',
     'vendors.update': '调整投放厂商',
   }
   return map[action] ?? action

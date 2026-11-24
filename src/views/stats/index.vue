@@ -152,11 +152,6 @@
                   <li>同一计划同一日期重复录入将覆盖原记录。</li>
                 </ul>
               </div>
-              <div class="aside-card tip">
-                <div class="aside-title">需要批量生成数据？</div>
-                <p>进入计划详情页可一键生成模拟数据，覆盖写入且可复现。</p>
-                <el-button text type="primary" @click="router.push('/campaign')">前往投放计划 →</el-button>
-              </div>
             </aside>
           </div>
         </el-tab-pane>

@@ -321,14 +321,6 @@
                   <el-icon><Picture /></el-icon>
                   素材库尚未接入，计划发布后可在详情页查看素材状态
                 </div>
-                <div class="publish-row">
-                  <span class="publish-label">发布方式 <i>*</i></span>
-                  <el-radio-group v-model="form.publishMode">
-                    <el-radio value="submit">提交审核（推荐）</el-radio>
-                    <el-radio v-if="user.isAdmin" value="publish">直接发布（仅管理员）</el-radio>
-                  </el-radio-group>
-                </div>
-                <p v-if="errors.publishMode" class="err">{{ errors.publishMode }}</p>
                 <div class="form-item span-2">
                   <label>备注</label>
                   <el-input
@@ -364,7 +356,7 @@
               <el-icon><ArrowRight /></el-icon>
             </el-button>
             <el-button v-else type="primary" :loading="submitting" @click="submit">
-              {{ form.publishMode === 'publish' ? '确认发布' : '提交审核' }}
+              确认发布
             </el-button>
           </div>
         </div>
@@ -422,9 +414,7 @@
         <div class="summary-tip">
           <el-icon><InfoFilled /></el-icon>
           <span>
-            {{ form.publishMode === 'publish'
-              ? '直接发布将立即生成投放单号并开始投放。'
-              : '提交后进入待审核，管理员审核通过后可按排期发布。' }}
+            提交后立即生成投放单号并开始投放。
           </span>
         </div>
       </aside>
@@ -446,7 +436,6 @@ import {
 import PageHeader from '@/components/PageHeader.vue'
 import { useAppStore } from '@/stores/app'
 import { useDictStore } from '@/stores/dict'
-import { useUserStore } from '@/stores/user'
 import { createCampaign, getCampaign, updateCampaign } from '@/api/campaign'
 import { getVendors } from '@/api/vendor'
 import type { CampaignDraftPayload, ChannelCode, Vendor } from '@/types'
@@ -465,7 +454,6 @@ const router = useRouter()
 const route = useRoute()
 const app = useAppStore()
 const dict = useDictStore()
-const user = useUserStore()
 
 const steps = [
   { title: '基础信息', desc: '计划、渠道、厂商与目标' },
@@ -502,7 +490,7 @@ const form = reactive({
   totalBudget: '42000.00',
   targetImpressions: 1_200_000,
   bidType: 'cpm' as 'cpm' | 'cpc',
-  publishMode: 'submit' as 'submit' | 'publish' | 'draft',
+  publishMode: 'publish' as 'submit' | 'publish' | 'draft',
   remark: '',
 })
 
@@ -608,7 +596,7 @@ const stepError = (step: number) => {
     ['name', 'projectId', 'channels', 'vendors', 'goal', 'contractNo'],
     ['regions', 'gender', 'ages', 'interests'],
     ['startDate', 'endDate', 'dailyBudget', 'totalBudget', 'targetImpressions', 'bidType'],
-    ['publishMode', 'confirm'],
+    ['confirm'],
   ][step - 1]
   return keys?.some((key) => errors[key])
 }
@@ -618,7 +606,7 @@ function clearStepErrors(step: number) {
     1: ['name', 'projectId', 'channels', 'vendors', 'goal', 'contractNo'],
     2: ['regions', 'gender', 'ages', 'interests'],
     3: ['startDate', 'endDate', 'dailyBudget', 'totalBudget', 'targetImpressions', 'bidType'],
-    4: ['publishMode', 'confirm'],
+    4: ['confirm'],
   }
   keyMap[step]?.forEach((key) => delete errors[key])
 }
@@ -666,7 +654,6 @@ function validateStep(step: number): boolean {
     }
   }
   if (step === 4) {
-    if (!form.publishMode) errors.publishMode = '请选择发布方式'
     if (!confirmed.value) errors.confirm = '请先勾选确认后提交'
   }
   return !stepError(step)
@@ -760,12 +747,8 @@ async function submit() {
   }
   submitting.value = true
   try {
-    const result = await persist(form.publishMode === 'publish' ? 'publish' : 'submit')
-    ElMessage.success(
-      form.publishMode === 'publish'
-        ? '发布成功，已生成投放单号并开始投放'
-        : '已提交审核，预计一个工作日内完成',
-    )
+    const result = await persist('publish')
+    ElMessage.success('发布成功，已生成投放单号并开始投放')
     const highlight = result?.ids?.[0]
     router.push(highlight ? `/campaign?highlight=${highlight}` : '/campaign')
   } catch (error) {
@@ -795,7 +778,7 @@ function fillFromDetail(detail: Awaited<ReturnType<typeof getCampaign>>, asCopy:
   form.totalBudget = Number(detail.budget).toFixed(2)
   form.targetImpressions = Number(detail.targetImpressions)
   form.remark = detail.remark ?? ''
-  form.publishMode = 'submit'
+  form.publishMode = 'publish'
 }
 
 onMounted(async () => {

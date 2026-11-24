@@ -2,9 +2,9 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
+import { RefreshLeft, Search } from '@element-plus/icons-vue';
 import type { User } from '@/admin/types';
-import { createUser, listUsers, resetUserPassword, updateUser } from '@/admin/system';
+import { listUsers, resetUserPassword, updateUser } from '@/admin/system';
 import { useUserStore } from '@/stores/user';
 import { STATUS_OPTIONS } from '@/admin/domain';
 import { formatDateTime } from '@/admin/format';
@@ -71,12 +71,11 @@ function handleSizeChange(): void {
 interface UserFormModel {
   account: string;
   name: string;
-  password: string;
 }
 
 const formRef = ref<FormInstance>();
 const dialog = reactive({ visible: false, submitting: false, editingId: 0 });
-const form = reactive<UserFormModel>({ account: '', name: '', password: '' });
+const form = reactive<UserFormModel>({ account: '', name: '' });
 
 const isEdit = computed(() => dialog.editingId > 0);
 const isSelfEdit = computed(() => isEdit.value && dialog.editingId === selfId.value);
@@ -103,26 +102,12 @@ const rules = computed<FormRules>(() => ({
     { required: true, message: '请输入姓名', trigger: 'blur' },
     { min: 2, max: 20, message: '姓名长度需为 2-20 个字符', trigger: 'blur' }
   ],
-  password: [
-    { required: true, message: '请输入初始密码', trigger: 'blur' },
-    { min: 8, max: 20, message: '初始密码需为 8-20 位字符', trigger: 'blur' }
-  ]
 }));
-
-function openCreate(): void {
-  dialog.editingId = 0;
-  form.account = '';
-  form.name = '';
-  form.password = '';
-  dialog.visible = true;
-  void nextTick(() => formRef.value?.clearValidate());
-}
 
 function openEdit(row: User): void {
   dialog.editingId = row.id;
   form.account = row.account;
   form.name = row.name;
-  form.password = '';
   dialog.visible = true;
   void nextTick(() => formRef.value?.clearValidate());
 }
@@ -133,21 +118,11 @@ async function handleSubmit(): Promise<void> {
   if (!valid) return;
   dialog.submitting = true;
   try {
-    if (isEdit.value) {
-      const updated = await updateUser(dialog.editingId, {
-        name: form.name.trim()
-      });
-      if (updated.id === selfId.value) void userStore.fetchProfile();
-      ElMessage.success('管理员账号已更新');
-    } else {
-      await createUser({
-        account: form.account.trim(),
-        name: form.name.trim(),
-        role: 'admin',
-        password: form.password
-      });
-      ElMessage.success('管理员账号已创建');
-    }
+    const updated = await updateUser(dialog.editingId, {
+      name: form.name.trim()
+    });
+    if (updated.id === selfId.value) void userStore.fetchProfile();
+    ElMessage.success('管理员账号已更新');
     dialog.visible = false;
     await load();
   } catch (error) {
@@ -223,7 +198,6 @@ onMounted(() => {
         <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
         <el-button :icon="RefreshLeft" @click="handleResetQuery">重置</el-button>
       </div>
-      <el-button :icon="Plus" @click="openCreate">新增账号</el-button>
     </div>
 
     <el-table v-loading="loading" :data="rows" row-key="id" border stripe>
@@ -265,7 +239,7 @@ onMounted(() => {
         </template>
       </el-table-column>
       <template #empty>
-        <EmptyState description="暂无管理员账号" hint="调整筛选条件，或新增一个管理员账号" />
+        <EmptyState description="暂无管理员账号" hint="账号由后端统一发放，仅支持维护显示名称与密码" />
       </template>
     </el-table>
 
@@ -284,7 +258,7 @@ onMounted(() => {
 
     <el-dialog
       v-model="dialog.visible"
-      :title="isEdit ? '编辑账号' : '新增账号'"
+      title="编辑管理员账号"
       width="480px"
       destroy-on-close
     >
@@ -294,9 +268,6 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="2-20 个字符" maxlength="20" />
-        </el-form-item>
-        <el-form-item v-if="!isEdit" label="初始密码" prop="password">
-          <el-input v-model="form.password" type="password" show-password placeholder="8-20 位字符" maxlength="20" />
         </el-form-item>
         <el-alert
           v-if="isSelfEdit"
