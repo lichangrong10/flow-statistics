@@ -7,14 +7,14 @@
       </div>
 
       <div class="statement-body">
-        <p class="eyebrow">系统管理 · 2026 年太仓分公司</p>
-        <h1>维护账号、主数据<br />与模拟投流参数</h1>
+        <p class="eyebrow">统一管理入口 · 2026 年太仓分公司</p>
+        <h1>统一管理账号、主数据<br />与模拟投流参数</h1>
         <p class="desc">
-          管理员入口仅对管理员账号开放。用于维护用户、厂商、渠道字典、
+          平台仅保留管理员入口，用于维护管理员账号、厂商、渠道字典、
           模拟参数与操作日志；所有修改实时写入后端并留痕。
         </p>
         <ol class="points">
-          <li><span>01</span>用户与权限管理</li>
+          <li><span>01</span>管理员账号与权限</li>
           <li><span>02</span>厂商与渠道主数据</li>
           <li><span>03</span>模拟参数与操作日志</li>
         </ol>
@@ -29,7 +29,7 @@
       <div class="panel-inner">
         <header class="panel-head">
           <h2>管理员登录</h2>
-          <p>请使用管理员账号进入系统管理</p>
+          <p>请使用管理员账号登录平台</p>
         </header>
 
         <el-form class="login-form" @submit.prevent="onSubmit">
@@ -74,11 +74,10 @@
             :loading="loading"
             @click="onSubmit"
           >
-            {{ loading ? '正在验证…' : '进入系统管理' }}
+            {{ loading ? '正在验证…' : '进入系统' }}
           </el-button>
         </el-form>
 
-        <router-link class="back-link" to="/login">← 返回普通用户登录</router-link>
         <footer class="panel-foot">
           <span>© 2026 投流统计平台</span>
         </footer>
@@ -119,7 +118,7 @@ async function onSubmit() {
     const result = await user.login(form.username.trim(), form.password)
     if (result.user.role !== 'admin') {
       await user.logout()
-      errorText.value = '该账号不是管理员，请返回普通用户登录'
+      errorText.value = '该账号没有管理员权限，无法登录'
       return
     }
     await Promise.allSettled([dict.load(), app.loadProjects()])
@@ -281,15 +280,6 @@ async function onSubmit() {
   height: 40px;
   border-radius: var(--radius-xs);
   letter-spacing: 0.04em;
-}
-.back-link {
-  display: inline-block;
-  margin-top: 20px;
-  font-size: var(--font-size-aux);
-  color: var(--color-text-secondary);
-}
-.back-link:hover {
-  color: var(--color-text);
 }
 .panel-foot {
   margin-top: 40px;

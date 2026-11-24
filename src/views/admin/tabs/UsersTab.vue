@@ -3,11 +3,10 @@ import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, RefreshLeft, Search } from '@element-plus/icons-vue';
-import type { Role, User } from '@/admin/types';
+import type { User } from '@/admin/types';
 import { createUser, listUsers, resetUserPassword, updateUser } from '@/admin/system';
 import { useUserStore } from '@/stores/user';
-import { ROLE_OPTIONS, ROLE_TAG_TYPES, STATUS_OPTIONS } from '@/admin/domain';
-import { ROLE_LABELS } from '@/admin/constants';
+import { STATUS_OPTIONS } from '@/admin/domain';
 import { formatDateTime } from '@/admin/format';
 import { errorMessage } from '@/admin/error';
 import { isAccount } from '@/admin/validate';
@@ -23,7 +22,6 @@ const total = ref(0);
 
 const query = reactive({
   keyword: '',
-  role: '' as Role | '',
   status: '' as 0 | 1 | '',
   page: 1,
   pageSize: 10
@@ -36,15 +34,16 @@ async function load(): Promise<void> {
   try {
     const data = await listUsers({
       keyword: query.keyword.trim() || undefined,
-      role: query.role,
+      role: 'admin',
       status: query.status,
       page: query.page,
       pageSize: query.pageSize
     });
-    rows.value = data.list;
+    // 只展示管理员账号，历史普通账号不再进入管理列表
+    rows.value = data.list.filter((item) => item.role === 'admin');
     total.value = data.total;
   } catch (error) {
-    ElMessage.error(errorMessage(error, '用户列表加载失败'));
+    ElMessage.error(errorMessage(error, '管理员账号列表加载失败'));
   } finally {
     loading.value = false;
   }
@@ -57,7 +56,6 @@ function handleSearch(): void {
 
 function handleResetQuery(): void {
   query.keyword = '';
-  query.role = '';
   query.status = '';
   query.page = 1;
   void load();
@@ -73,13 +71,12 @@ function handleSizeChange(): void {
 interface UserFormModel {
   account: string;
   name: string;
-  role: Role;
   password: string;
 }
 
 const formRef = ref<FormInstance>();
 const dialog = reactive({ visible: false, submitting: false, editingId: 0 });
-const form = reactive<UserFormModel>({ account: '', name: '', role: 'user', password: '' });
+const form = reactive<UserFormModel>({ account: '', name: '', password: '' });
 
 const isEdit = computed(() => dialog.editingId > 0);
 const isSelfEdit = computed(() => isEdit.value && dialog.editingId === selfId.value);
@@ -106,7 +103,6 @@ const rules = computed<FormRules>(() => ({
     { required: true, message: '请输入姓名', trigger: 'blur' },
     { min: 2, max: 20, message: '姓名长度需为 2-20 个字符', trigger: 'blur' }
   ],
-  role: [{ required: true, message: '请选择身份', trigger: 'change' }],
   password: [
     { required: true, message: '请输入初始密码', trigger: 'blur' },
     { min: 8, max: 20, message: '初始密码需为 8-20 位字符', trigger: 'blur' }
@@ -117,7 +113,6 @@ function openCreate(): void {
   dialog.editingId = 0;
   form.account = '';
   form.name = '';
-  form.role = 'user';
   form.password = '';
   dialog.visible = true;
   void nextTick(() => formRef.value?.clearValidate());
@@ -127,7 +122,6 @@ function openEdit(row: User): void {
   dialog.editingId = row.id;
   form.account = row.account;
   form.name = row.name;
-  form.role = row.role;
   form.password = '';
   dialog.visible = true;
   void nextTick(() => formRef.value?.clearValidate());
@@ -141,19 +135,18 @@ async function handleSubmit(): Promise<void> {
   try {
     if (isEdit.value) {
       const updated = await updateUser(dialog.editingId, {
-        name: form.name.trim(),
-        role: form.role
+        name: form.name.trim()
       });
       if (updated.id === selfId.value) void userStore.fetchProfile();
-      ElMessage.success('账号信息已更新');
+      ElMessage.success('管理员账号已更新');
     } else {
       await createUser({
         account: form.account.trim(),
         name: form.name.trim(),
-        role: form.role,
+        role: 'admin',
         password: form.password
       });
-      ElMessage.success('账号已创建');
+      ElMessage.success('管理员账号已创建');
     }
     dialog.visible = false;
     await load();
@@ -218,15 +211,12 @@ onMounted(() => {
         <el-input
           v-model="query.keyword"
           class="filter-input"
-          placeholder="搜索账号 / 姓名"
+          placeholder="搜索管理员账号 / 姓名"
           clearable
           :prefix-icon="Search"
           @keyup.enter="handleSearch"
           @clear="handleSearch"
         />
-        <el-select v-model="query.role" class="filter-select" placeholder="全部身份" clearable>
-          <el-option v-for="item in ROLE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
         <el-select v-model="query.status" class="filter-select" placeholder="全部状态" clearable>
           <el-option v-for="item in STATUS_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -244,13 +234,6 @@ onMounted(() => {
         </template>
       </el-table-column>
       <el-table-column prop="name" label="姓名" min-width="110" />
-      <el-table-column label="身份" width="110">
-        <template #default="{ row }">
-          <el-tag :type="ROLE_TAG_TYPES[row.role as Role]" size="small" effect="light">
-            {{ ROLE_LABELS[row.role as Role] }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="状态" width="110">
         <template #default="{ row }">
           <el-switch
@@ -282,7 +265,7 @@ onMounted(() => {
         </template>
       </el-table-column>
       <template #empty>
-        <EmptyState description="暂无用户账号" hint="调整筛选条件，或新增一个账号" />
+        <EmptyState description="暂无管理员账号" hint="调整筛选条件，或新增一个管理员账号" />
       </template>
     </el-table>
 
@@ -311,13 +294,6 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="2-20 个字符" maxlength="20" />
-        </el-form-item>
-        <el-form-item label="身份" prop="role">
-          <el-radio-group v-model="form.role" :disabled="isSelfEdit">
-            <el-radio v-for="item in ROLE_OPTIONS" :key="item.value" :value="item.value">
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
         </el-form-item>
         <el-form-item v-if="!isEdit" label="初始密码" prop="password">
           <el-input v-model="form.password" type="password" show-password placeholder="8-20 位字符" maxlength="20" />

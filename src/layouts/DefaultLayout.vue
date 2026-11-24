@@ -66,14 +66,13 @@
           <div class="top-divider" />
 
           <el-dropdown trigger="click" @command="onUserCommand">
-            <div class="user-chip" :title="`${user.profile?.username ?? ''} · ${user.roleLabel}`">
+            <div class="user-chip" :title="`管理员：${user.profile?.username ?? ''}`">
               <span class="user-name">{{ user.displayName || '未登录' }}</span>
               <el-icon class="caret" :size="12"><ArrowDown /></el-icon>
             </div>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item disabled>账号：{{ user.profile?.username ?? '—' }}</el-dropdown-item>
-                <el-dropdown-item disabled>角色：{{ user.roleLabel }}</el-dropdown-item>
                 <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>

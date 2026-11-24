@@ -3,12 +3,6 @@ import type { CurveType, MockRatios, PlatformCode, Role } from '@/admin/types';
 /** 技术方案 4.8.3 要求的固定提示文案 */
 export const MOCK_BANNER_TEXT = '当前为模拟数据，仅用于流程验证与演示';
 
-/** 本地演示账号（仅 mock 模式下展示在登录页） */
-export const DEMO_ACCOUNTS: { account: string; password: string; role: Role; label: string }[] = [
-  { account: 'admin', password: 'admin123', role: 'admin', label: '系统管理员' },
-  { account: 'user01', password: 'user123', role: 'user', label: '普通用户' }
-];
-
 export const PLATFORM_OPTIONS: { value: PlatformCode; label: string }[] = [
   { value: 'douyin', label: '抖音' },
   { value: 'wechat', label: '微信' },

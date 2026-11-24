@@ -27,7 +27,6 @@ export const useUserStore = defineStore('user', {
     isLoggedIn: (state) => Boolean(state.token),
     isAdmin: (state) => state.profile?.role === 'admin',
     displayName: (state) => state.profile?.displayName ?? '',
-    roleLabel: (state) => (state.profile?.role === 'admin' ? '管理员' : '普通用户'),
   },
   actions: {
     hasPerm(code: string): boolean {

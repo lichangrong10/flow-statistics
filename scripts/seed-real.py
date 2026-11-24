@@ -118,18 +118,6 @@ CHAINS = {
 }
 
 
-def ensure_user() -> None:
-    status, payload = call("GET", "/users?page=1&pageSize=50")
-    users = payload.get("data", {}).get("items", [])
-    if any(user["username"] == "operator" for user in users):
-        return
-    st, res = call("POST", "/users", {
-        "username": "operator", "password": "123456",
-        "displayName": "陈思", "role": "user", "status": 1,
-    })
-    print("创建普通用户 operator:", st, res.get("message"))
-
-
 def ensure_project() -> dict:
     status, payload = call("GET", "/projects")
     projects = payload.get("data", [])
@@ -248,7 +236,6 @@ def main() -> None:
     TOKEN = payload["data"]["token"]
     print("登录成功:", payload["data"]["user"]["displayName"])
 
-    ensure_user()
     ensure_channels()
     project = ensure_project()
     vendors = ensure_vendors()

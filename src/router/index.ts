@@ -6,7 +6,6 @@ declare module 'vue-router' {
   interface RouteMeta {
     title?: string
     public?: boolean
-    adminOnly?: boolean
     activeMenu?: string
   }
 }
@@ -14,9 +13,7 @@ declare module 'vue-router' {
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
-    name: 'login',
-    component: () => import('@/views/login/index.vue'),
-    meta: { title: '登录', public: true },
+    redirect: '/admin/login',
   },
   {
     path: '/admin/login',
@@ -27,7 +24,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: DefaultLayout,
-    redirect: '/dashboard',
+    redirect: '/admin',
     children: [
       {
         path: 'dashboard',
@@ -75,15 +72,9 @@ const routes: RouteRecordRaw[] = [
         path: 'admin',
         name: 'admin',
         component: () => import('@/views/admin/AdminView.vue'),
-        meta: { title: '系统管理', adminOnly: true },
+        meta: { title: '系统管理' },
       },
     ],
-  },
-  {
-    path: '/403',
-    name: 'forbidden',
-    component: () => import('@/views/error/403.vue'),
-    meta: { title: '无权限' },
   },
   {
     path: '/:pathMatch(.*)*',
@@ -105,26 +96,33 @@ router.beforeEach(async (to) => {
   const user = useUserStore()
 
   if (to.meta.public) {
-    if ((to.name === 'login' || to.name === 'admin-login') && user.isLoggedIn) {
-      return { path: user.isAdmin ? '/admin' : '/dashboard' }
+    if (to.name === 'admin-login' && user.isLoggedIn && user.isAdmin) {
+      return { path: '/admin' }
     }
     return true
   }
 
   if (!user.isLoggedIn) {
-    const loginPath = to.path.startsWith('/admin') ? '/admin/login' : '/login'
-    return { path: loginPath, query: to.fullPath === '/' ? {} : { redirect: to.fullPath } }
+    return {
+      path: '/admin/login',
+      query: to.fullPath === '/' ? {} : { redirect: to.fullPath },
+    }
   }
 
   if (!user.profile) {
     try {
       await user.fetchProfile()
     } catch {
-      return { path: '/login', query: { redirect: to.fullPath } }
+      return { path: '/admin/login', query: { redirect: to.fullPath } }
     }
   }
 
-  if (to.meta.adminOnly && !user.isAdmin) return { path: '/403' }
+  // 平台只允许管理员账号登录，历史普通用户会话直接清理
+  if (user.profile?.role !== 'admin') {
+    user.reset()
+    return { path: '/admin/login', query: { redirect: to.fullPath } }
+  }
+
   return true
 })
 

@@ -91,20 +91,20 @@
 | 区域 | 规格 |
 |---|---|
 | 侧边栏 | 248px；折叠 64px；`#111110` 纯色，1px 右边框；无渐变/阴影 |
-| 顶栏 | 56px；白底（暗色 `#171716`）；1px 底边框；含面包屑、项目、数据时间、主题切换、账号 |
+| 顶栏 | 56px；白底（暗色 `#171716`）；1px 底边框；含面包屑、数据时间、主题切换、管理员账号 |
 | 内容区 | 最大 1440px，居中；24px 边距；12 栅格（`.grid-12`，间距 16px） |
 | 导航 | 40px 行高；激活项 2px 左侧白条；徽标为白底黑字方角 |
 | 移动 | ≤900px 侧栏收为 64px 仅图标；项目选择与账号信息隐藏；KPI 单列/两列 |
 
-**登录（两条独立路径）**：
+**登录（唯一入口）**：
 
-- `/login`：普通用户登录，左侧近黑品牌陈述 + 右侧 **480px** 登录面板；无角色页签。
-- `/admin/login`：管理员登录，独立布局：左侧近黑品牌陈述（40px 主张），右侧 **480px** 登录面板；不使用方形 Logo，单色、无渐变、无阴影。
-- 未登录访问 `/admin` 自动跳 `/admin/login?redirect=/admin`；普通用户访问 `/admin` 返回 403。
-- 两个登录页统一为「左侧黑色陈述 + 右侧 480px 白色面板」，黑白比例一致；≤900px 隐藏品牌陈述。
+- `/admin/login`：管理员登录，左侧近黑品牌陈述（40px 主张），右侧 **480px** 登录面板；不使用方形 Logo，单色、无渐变、无阴影。
+- `/login` 仅作为旧地址跳转到 `/admin/login`；不存在普通用户登录页。
+- 未登录访问任意业务页或 `/admin` 自动跳 `/admin/login?redirect=...`；非管理员账号登录会被拒绝。
+- ≤900px 隐藏品牌陈述，登录面板占满。
 - 顶栏不再显示首字头像、项目选择和重复的连接状态；账号以文字 + 下拉箭头呈现。
 
-**管理端**：`/admin` 挂在同一壳体下，五个页签共用 PageHeader / 表格 / 表单；管理员侧栏可见「系统管理」，普通用户访问返回 403。
+**管理端**：`/admin` 挂在同一壳体下，五个页签共用 PageHeader / 表格 / 表单；只有管理员登录，侧栏可见「系统管理」。
 
 ---
 
@@ -116,7 +116,7 @@
 |---|---|
 | Button | 主按钮黑底白字；次按钮透明+发际线；危险/警告也走中性，不使用彩色文字；圆角 2px。按钮组横向间距 12px、换行后行距 8px；表格行内文字按钮 14px；弹窗底部 12px |
 | Input / Select / Textarea | 1px 内描边，2px 圆角；聚焦 1px 实线黑（暗色白），无光晕 |
-| Checkbox / Radio / Switch | 选中用 `--ink-950`（暗色反转为浅色），方角滑轨 |
+| Checkbox / Radio / Switch | 选中用 `--ink-950`（暗色反转为浅色）；开关为胶囊 + 圆形滑块 |
 | Tabs | 1px 指示条，激活黑/白粗体；`DimensionTabs` 为发际线分段控件 |
 | Table | 表头 11px 大写宽字距、`--ink-50` 底、1px 下边框；行高 48；无斑马纹。计划表：单号并入计划名称、曝光量合并为「实际 / 计划」、排期单行、厂商显示数量+悬停名单、操作列独立发际线 |
 | Pagination | 方角页码，选中黑底白字（暗色反转） |
@@ -127,7 +127,7 @@
 | KpiCard | 11px 大写标签 + 28px 数字 + 8px 语义点环比；可点击卡片只改发际线深浅 |
 | Charts | 轴/网格/图例中性；序列用语义色；面积填充纯色 8%；无渐变 |
 
-**数据页状态**：每个数据页统一提供加载（骨架）、空（EmptyState）、错误（提示 + 重试入口）、无权限（403）、网络异常（请求层提示）；暗色下自动继承。
+**数据页状态**：每个数据页统一提供加载（骨架）、空（EmptyState）、错误（提示 + 重试入口）、网络异常（请求层提示）；暗色下自动继承。
 
 ---
 
@@ -156,7 +156,6 @@
 
 | 页面 | 明色 | 暗色 |
 |---|---|---|
-| 用户登录 | `login-desktop-light.png` / `login-mobile-light.png` | `login-desktop-dark.png` / `login-mobile-dark.png` |
 | 管理员登录 | `admin-login-desktop-light.png` / `admin-login-mobile-light.png` | `admin-login-desktop-dark.png` / `admin-login-mobile-dark.png` |
 | 工作台 | `dashboard-desktop-light.png` / `dashboard-mobile-light.png` | `dashboard-desktop-dark.png` / `dashboard-mobile-dark.png` |
 | 投放计划 | `campaign-list-desktop-light.png` / `campaign-list-mobile-light.png` | `campaign-list-desktop-dark.png` / `campaign-list-mobile-dark.png` |
@@ -164,8 +163,8 @@
 | 数据回收 | `stats-desktop-light.png` | `stats-desktop-dark.png` |
 | 数据看板 | `board-desktop-light.png` | `board-desktop-dark.png` |
 | 报表中心 | `report-desktop-light.png` | `report-desktop-dark.png` |
-| 系统管理·用户 | `admin-users-desktop-light.png` | `admin-users-desktop-dark.png` |
-| 系统管理·模拟参数 | `admin-mock-desktop-light.png` | — |
+| 系统管理·管理员账号 | `admin-users-desktop-light.png` | `admin-users-desktop-dark.png` |
+| 系统管理·模拟参数 | `admin-mock-desktop-light.png` | `admin-mock-desktop-dark.png` |
 
 ---
 
@@ -190,7 +189,7 @@
 | 直播平台页面（直播网格、频道播放器、RTMP 设置、边缘节点、转码模板、订单、审核、告警） | 本次只改现有投流平台页面，不新建直播业务页面（已确认范围） |
 | 管理员登录独立 `/admin/login`、384px 面板 | 已实现独立布局；按反馈把右侧面板加大到 480px，无方形 Logo |
 | 播放器外壳、频道卡片等组件 | 不适用，未实现 |
-| 桌面 + 移动明暗截图 | 已提供 30 张（用户登录、管理员登录、用户端 7 页、管理端 3 页，桌面/移动、明/暗） |
+| 桌面 + 移动明暗截图 | 已提供 26 张（管理员登录、业务页面 7 个、管理端 3 页，桌面/移动、明/暗） |
 | AA 对比度 | 文字对比度已按 AA 调整；极端小字（11px）建议仅在辅助信息使用 |
 
 

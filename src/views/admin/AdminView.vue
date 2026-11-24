@@ -12,7 +12,7 @@ const activeTab = ref('users')
 const refreshToken = ref(0)
 
 const tabs = [
-  { name: 'users', label: '用户管理', icon: User },
+  { name: 'users', label: '管理员账号', icon: User },
   { name: 'vendors', label: '厂商管理', icon: Shop },
   { name: 'mock', label: '模拟参数', icon: MagicStick },
   { name: 'dicts', label: '字典配置', icon: Collection },
@@ -24,7 +24,7 @@ const tabs = [
   <div class="page admin-page">
     <PageHeader
       title="系统管理"
-      subtitle="用户、厂商、模拟参数、字典与操作日志"
+      subtitle="管理员账号、厂商、模拟参数、字典与操作日志"
     />
 
     <div class="admin-panel">
