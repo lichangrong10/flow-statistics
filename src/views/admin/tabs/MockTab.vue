@@ -531,14 +531,6 @@ onMounted(async () => {
 
 <template>
   <div class="mock-tab">
-    <el-alert
-      v-if="true"
-      class="backend-tip"
-      type="info"
-      :closable="false"
-      show-icon
-      title="真实后端模式：模拟参数会按计划保存并逐条生成到后端；生成与清空均实时写入后端，常用方案存在本浏览器，调节记录由后端操作日志反推。"
-    />
 
     <!-- 计划选择 -->
     <section class="section">
@@ -927,7 +919,7 @@ onMounted(async () => {
 .section__actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px 10px;
   flex-wrap: wrap;
 }
 

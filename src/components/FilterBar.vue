@@ -51,7 +51,7 @@ const emit = defineEmits<{ search: []; reset: [] }>()
 .actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex: none;
 }
 </style>

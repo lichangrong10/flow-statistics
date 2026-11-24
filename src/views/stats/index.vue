@@ -837,7 +837,7 @@ onMounted(async () => {
 .manual-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 12px;
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid var(--color-border-light);
@@ -941,8 +941,8 @@ onMounted(async () => {
   flex: none;
 }
 .import-step.active .is-index {
-  background: var(--color-primary);
-  color: #fff;
+  background: var(--ink-950);
+  color: var(--color-text-inverse);
 }
 .import-step > div {
   flex: 1;

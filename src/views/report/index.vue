@@ -211,10 +211,10 @@ const hasRunning = computed(() =>
 )
 
 const columns: TableColumn[] = [
-  { prop: 'type', label: '报表类型', width: 160, slot: 'type' },
-  { prop: 'status', label: '状态', width: 100, slot: 'status' },
-  { prop: 'createdAt', label: '创建时间', width: 150, slot: 'createdAt' },
-  { prop: 'fileName', label: '文件', minWidth: 260, slot: 'fileName' },
+  { prop: 'type', label: '报表类型', width: 140, slot: 'type' },
+  { prop: 'status', label: '状态', width: 90, slot: 'status' },
+  { prop: 'createdAt', label: '创建时间', width: 140, slot: 'createdAt' },
+  { prop: 'fileName', label: '文件', minWidth: 240, slot: 'fileName' },
   { prop: 'actions', label: '操作', width: 90, fixed: 'right', slot: 'actions' },
 ]
 
@@ -363,7 +363,7 @@ onBeforeUnmount(stopPolling)
 .type-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 18px;
 }
 .type-card {
@@ -531,11 +531,13 @@ onBeforeUnmount(stopPolling)
   min-width: 0;
 }
 .file-name {
-  font-size: 12.5px;
-  color: var(--color-text);
+  display: block;
+  max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: var(--font-size-aux);
+  color: var(--color-text);
 }
 .file-size {
   font-size: 11px;

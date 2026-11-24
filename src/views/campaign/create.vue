@@ -903,9 +903,9 @@ onMounted(async () => {
   background: var(--ink-100);
 }
 .step.active .step-index {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #fff;
+  background: var(--ink-950);
+  border-color: var(--ink-950);
+  color: var(--color-text-inverse);
   
 }
 .step.active .step-title {
@@ -926,9 +926,9 @@ onMounted(async () => {
   color: var(--color-text);
 }
 .step.error.active .step-index {
-  background: var(--color-danger);
-  border-color: var(--color-text);
-  color: #fff;
+  background: var(--ink-950);
+  border-color: var(--signal-danger);
+  color: var(--color-text-inverse);
   
 }
 
@@ -1109,9 +1109,9 @@ onMounted(async () => {
   border-color: var(--color-border);
 }
 .chip.selected {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
-  color: #fff;
+  border-color: var(--ink-950);
+  background: var(--ink-950);
+  color: var(--color-text-inverse);
   
 }
 

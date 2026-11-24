@@ -307,7 +307,7 @@ const columns: TableColumn[] = [
   { prop: 'targetImpressions', label: '计划曝光量', width: 84, align: 'right', slot: 'target' },
   { prop: 'impressions', label: '实际曝光量', width: 84, align: 'right', slot: 'impressions' },
   { prop: 'completionRate', label: '完成率', width: 72, align: 'right', slot: 'completion' },
-  { prop: 'actions', label: '操作', width: 136, fixed: 'right', slot: 'actions' },
+  { prop: 'actions', label: '操作', width: 160, fixed: 'right', slot: 'actions' },
 ]
 
 function str(value: unknown): string {
@@ -696,7 +696,8 @@ onMounted(() => {
 .list-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .divider {
   width: 1px;
@@ -805,7 +806,7 @@ onMounted(() => {
 .row-actions {
   display: flex;
   flex-wrap: nowrap;
-  gap: 2px;
+  gap: 14px;
   align-items: center;
 }
 .row-actions :deep(.el-button.is-link) {

@@ -183,7 +183,7 @@ onMounted(() => {
       <el-table :data="channels" border size="small">
         <el-table-column label="图标" width="70" align="center">
           <template #default="{ row }">
-            <span class="channel-icon" :style="{ backgroundColor: row.color }">{{ row.icon }}</span>
+            <span class="channel-icon">{{ row.icon }}</span>
           </template>
         </el-table-column>
         <el-table-column label="渠道编码" width="130">
@@ -371,9 +371,12 @@ onMounted(() => {
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 2px;
-  color: #ffffff;
-  font-size: 12px;
+  border-radius: var(--radius-xs);
+  border: var(--hairline);
+  background: var(--ink-50);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-micro);
+  font-weight: 600;
   line-height: 1;
 }
 

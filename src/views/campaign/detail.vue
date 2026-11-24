@@ -1047,7 +1047,7 @@ onMounted(loadDetail)
 .head-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px 10px;
   flex: none;
   flex-wrap: wrap;
   justify-content: flex-end;

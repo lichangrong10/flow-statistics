@@ -238,11 +238,85 @@ ul {
   text-underline-offset: 3px;
 }
 .el-button + .el-button {
-  margin-left: 8px;
+  margin-left: 12px;
 }
+
+/* 统一按钮组间距：横向 12px、换行后 8px */
+.head-actions .el-button + .el-button,
+.wizard-foot .el-button + .el-button,
+.foot-right .el-button + .el-button,
+.manual-actions .el-button + .el-button,
+.section__actions .el-button + .el-button,
+.actions .el-button + .el-button,
+.list-actions .el-button + .el-button,
+.row-actions .el-button + .el-button,
+.toolbar .el-button + .el-button,
+.toolbar__filters .el-button + .el-button {
+  margin-left: 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.toolbar__filters {
+  display: flex;
+  align-items: center;
+  gap: 10px 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* 弹窗 / 消息框按钮 */
+.el-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+.el-dialog__footer .el-button + .el-button {
+  margin-left: 0;
+}
+.el-message-box__btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.el-message-box__btns .el-button + .el-button {
+  margin-left: 0;
+}
+
+/* 单选按钮组：拆成有间距的独立按钮 */
+.el-radio-group {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.el-radio-button__inner {
+  border-radius: var(--radius-xs) !important;
+}
+
 .el-button.is-disabled,
-.el-button.is-disabled:hover {
-  opacity: 0.4;
+.el-button.is-disabled:hover,
+.el-button.is-disabled:focus {
+  opacity: 1;
+  --el-button-disabled-bg-color: var(--ink-75);
+  --el-button-disabled-border-color: var(--color-border);
+  --el-button-disabled-text-color: var(--color-text-tertiary);
+  color: var(--color-text-tertiary) !important;
+  border-color: var(--color-border) !important;
+  background: var(--ink-75) !important;
+}
+.el-button.is-text.is-disabled,
+.el-button.is-link.is-disabled {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--color-text-tertiary) !important;
 }
 
 .el-input__wrapper,
@@ -455,13 +529,19 @@ ul {
 .el-pagination.is-background .el-pager li.is-active {
   background: var(--ink-950);
   border-color: var(--ink-950);
-  color: var(--color-text-inverse);
+  color: var(--color-text-inverse) !important;
 }
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .btn-next {
   border-radius: 0;
   background: transparent;
   border: var(--hairline);
+  color: var(--color-text-secondary);
+}
+.el-pagination.is-background .btn-prev:disabled,
+.el-pagination.is-background .btn-next:disabled {
+  color: var(--color-text-tertiary);
+  opacity: 1;
 }
 .el-pagination .el-select__wrapper {
   box-shadow: none;
@@ -471,19 +551,40 @@ ul {
 .el-switch.is-checked .el-switch__core {
   background: var(--ink-950);
   border-color: var(--ink-950);
+  color: var(--color-text-inverse);
+}
+.el-switch.is-checked .el-switch__action {
+  background: var(--color-text-inverse);
+}
+.el-switch.is-checked .el-switch__inner,
+.el-switch.is-checked .el-switch__inner * {
+  color: var(--color-text-inverse) !important;
+}
+.el-switch:not(.is-checked) .el-switch__inner,
+.el-switch:not(.is-checked) .el-switch__inner * {
+  color: var(--color-text-secondary) !important;
 }
 .el-switch__core {
-  border-radius: var(--radius-xs);
+  border-radius: 999px;
   border-color: var(--color-border);
 }
 .el-switch__action {
-  border-radius: var(--radius-xs);
+  border-radius: 50%;
 }
 
 .el-checkbox__input.is-checked .el-checkbox__inner,
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
   background: var(--ink-950);
   border-color: var(--ink-950);
+}
+.el-checkbox__input.is-checked .el-checkbox__inner::after {
+  border-color: var(--color-text-inverse);
+}
+.el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+  background-color: var(--color-text-inverse);
+}
+.el-checkbox__input.is-checked + .el-checkbox__label {
+  color: var(--color-text);
 }
 .el-checkbox__inner,
 .el-radio__inner {
@@ -493,6 +594,9 @@ ul {
 .el-radio__input.is-checked .el-radio__inner {
   background: var(--ink-950);
   border-color: var(--ink-950);
+}
+.el-radio__input.is-checked .el-radio__inner::after {
+  background: var(--color-text-inverse);
 }
 .el-radio__input.is-checked + .el-radio__label,
 .el-checkbox__input.is-checked + .el-checkbox__label {
@@ -506,9 +610,10 @@ ul {
   box-shadow: none !important;
 }
 .el-radio-button__original-radio:checked + .el-radio-button__inner {
-  background: var(--ink-950);
-  border-color: var(--ink-950);
-  color: var(--color-text-inverse);
+  background: var(--ink-950) !important;
+  border-color: var(--ink-950) !important;
+  color: var(--color-text-inverse) !important;
+  box-shadow: none !important;
 }
 
 .el-form-item__label {
@@ -727,4 +832,85 @@ ul {
   .kpi-grid {
     grid-template-columns: minmax(0, 1fr) !important;
   }
+}
+
+
+/* 日期选择器：暗色下选中日期使用反色文字 */
+.el-date-table td.current:not(.disabled) .el-date-table-cell__text {
+  background: var(--ink-950) !important;
+  color: var(--color-text-inverse) !important;
+}
+.el-date-table td.today .el-date-table-cell__text {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.el-date-table td.in-range .el-date-table-cell {
+  background: var(--ink-50);
+}
+.el-date-table td.start-date .el-date-table-cell__text,
+.el-date-table td.end-date .el-date-table-cell__text {
+  background: var(--ink-950) !important;
+  color: var(--color-text-inverse) !important;
+}
+.el-date-picker__header-label,
+.el-picker-panel__icon-btn,
+.el-date-table th {
+  color: var(--color-text-secondary);
+}
+.el-picker-panel {
+  background: var(--el-bg-color-overlay);
+  border-color: var(--color-border);
+}
+
+
+/* 提示类组件：暗色下不允许白底 */
+.el-alert,
+.el-alert--info,
+.el-alert--info.is-light,
+.el-alert--success,
+.el-alert--success.is-light,
+.el-alert--warning,
+.el-alert--warning.is-light,
+.el-alert--error,
+.el-alert--error.is-light {
+  background: var(--ink-50) !important;
+  border: var(--hairline) !important;
+  color: var(--color-text-secondary) !important;
+}
+.el-alert .el-alert__title {
+  color: var(--color-text) !important;
+}
+.el-alert .el-alert__description {
+  color: var(--color-text-secondary) !important;
+}
+.el-alert .el-alert__icon {
+  color: var(--color-text-secondary) !important;
+}
+.el-alert .el-alert__close-btn {
+  color: var(--color-text-tertiary) !important;
+}
+
+.el-popover,
+.el-popover.el-popper,
+.el-notification {
+  background: var(--color-surface) !important;
+  border: var(--hairline) !important;
+  color: var(--color-text) !important;
+  box-shadow: none !important;
+}
+.el-notification__title {
+  color: var(--color-text) !important;
+}
+.el-notification__content {
+  color: var(--color-text-secondary) !important;
+}
+
+.el-loading-mask {
+  background-color: var(--el-mask-color) !important;
+}
+.el-loading-spinner .path {
+  stroke: var(--color-text-secondary);
+}
+.el-loading-spinner .el-loading-text {
+  color: var(--color-text-secondary);
 }
