@@ -121,62 +121,59 @@
         @row-click="(row) => goDetail(row as unknown as CampaignListItem)"
         @empty-action="goCreate"
       >
-        <template #code="{ row }">
-          <el-tooltip v-if="row.code" content="点击复制投放单号" placement="top">
-            <span
-              class="code-cell mono"
-              @click.stop="copyCode(row as unknown as CampaignListItem)"
-            >
-              {{ row.code }}
-            </span>
-          </el-tooltip>
-          <span v-else class="tertiary">—</span>
-        </template>
 
         <template #name="{ row }">
-          <div class="name-cell">
-            <div class="name-text" :title="String(row.name)">{{ row.name }}</div>
-            <div class="name-sub">
-              {{ row.projectName }}
-              <template v-if="row.ownerName">
-                <span class="dot-sep">·</span>
-                {{ row.ownerName }}
-              </template>
-            </div>
-          </div>
-        </template>
+              <div class="name-cell">
+                <div class="name-text" :title="String(row.name)">{{ row.name }}</div>
+                <div class="name-sub">
+                  <el-tooltip v-if="row.code" content="点击复制投放单号" placement="top">
+                    <span class="code-cell mono" @click.stop="copyCode(row as unknown as CampaignListItem)">
+                      {{ row.code }}
+                    </span>
+                  </el-tooltip>
+                  <span v-else class="tertiary">未生成单号</span>
+                </div>
+              </div>
+            </template>
 
         <template #channel="{ row }">
           <ChannelTag :channel="(row as unknown as CampaignListItem).channel" />
         </template>
 
         <template #vendors="{ row }">
-          <VendorTags :vendors="(row as unknown as CampaignListItem).vendors" :max="1" :tag-max-width="84" />
-        </template>
+              <el-tooltip
+                v-if="(row as unknown as CampaignListItem).vendors.length"
+                placement="top"
+              >
+                <template #content>
+                  <div v-for="vendor in (row as unknown as CampaignListItem).vendors" :key="vendor.id">
+                    {{ vendor.name }}
+                  </div>
+                </template>
+                <span class="vendor-count">{{ (row as unknown as CampaignListItem).vendors.length }} 家</span>
+              </el-tooltip>
+              <span v-else class="tertiary">—</span>
+            </template>
 
         <template #status="{ row }">
           <StatusTag :status="(row as unknown as CampaignListItem).status" />
         </template>
 
         <template #schedule="{ row }">
-          <div class="schedule-cell">
-            <span class="num">{{ row.startDate }}</span>
-            <span class="schedule-sub">
-              <span class="num">{{ row.endDate }}</span>
-              <span v-if="row.status === 'running' && row.dayIndex" class="day-badge">
-                第{{ row.dayIndex }}天
-              </span>
-            </span>
-          </div>
-        </template>
-
-        <template #target="{ row }">
-          <span class="num right">{{ formatNumber(row.targetImpressions as string) }}</span>
-        </template>
-
-        <template #impressions="{ row }">
-          <span class="num right">{{ formatNumber(row.impressions as string) }}</span>
-        </template>
+              <div class="schedule-cell">
+                <span class="num">{{ row.startDate }} → {{ String(row.endDate).slice(5) }}</span>
+                <span v-if="row.status === 'running' && row.dayIndex" class="day-badge">
+                  第{{ row.dayIndex }}天
+                </span>
+              </div>
+            </template>
+            <template #exposure="{ row }">
+              <div class="exposure-cell">
+                <span class="num exposure-actual">{{ formatNumber(row.impressions as string) }}</span>
+                <span class="exposure-sep">/</span>
+                <span class="num exposure-target">{{ formatNumber(row.targetImpressions as string) }}</span>
+              </div>
+            </template>
 
         <template #completion="{ row }">
           <span
@@ -298,16 +295,14 @@ const canArchive = computed(
 )
 
 const columns: TableColumn[] = [
-  { prop: 'code', label: '投放单号', width: 124, slot: 'code' },
-  { prop: 'name', label: '计划名称', minWidth: 120, slot: 'name' },
-  { prop: 'channel', label: '渠道', width: 70, slot: 'channel' },
-  { prop: 'vendors', label: '厂商', width: 100, slot: 'vendors' },
-  { prop: 'status', label: '状态', width: 70, slot: 'status' },
-  { prop: 'startDate', label: '排期', width: 146, slot: 'schedule' },
-  { prop: 'targetImpressions', label: '计划曝光量', width: 84, align: 'right', slot: 'target' },
-  { prop: 'impressions', label: '实际曝光量', width: 84, align: 'right', slot: 'impressions' },
-  { prop: 'completionRate', label: '完成率', width: 72, align: 'right', slot: 'completion' },
-  { prop: 'actions', label: '操作', width: 160, fixed: 'right', slot: 'actions' },
+  { prop: 'name', label: '计划', width: 220, slot: 'name' },
+  { prop: 'status', label: '状态', minWidth: 90, slot: 'status' },
+  { prop: 'channel', label: '渠道', minWidth: 84, slot: 'channel' },
+  { prop: 'vendors', label: '厂商', minWidth: 54, slot: 'vendors' },
+  { prop: 'startDate', label: '排期', minWidth: 170, slot: 'schedule' },
+  { prop: 'impressions', label: '曝光量（实际 / 计划）', minWidth: 150, align: 'right', slot: 'exposure' },
+  { prop: 'completionRate', label: '完成率', minWidth: 84, align: 'right', slot: 'completion' },
+  { prop: 'actions', label: '操作', width: 166, fixed: 'right', slot: 'actions' },
 ]
 
 function str(value: unknown): string {
@@ -748,22 +743,50 @@ onMounted(() => {
 }
 .name-sub {
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11.5px;
   color: var(--color-text-tertiary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.vendor-count {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: help;
+  border-bottom: 1px dashed var(--color-border);
+  line-height: 18px;
+}
+.exposure-cell {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  white-space: nowrap;
+}
+.exposure-actual {
+  font-size: 13px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+.exposure-sep,
+.exposure-target {
+  font-size: 11.5px;
+  color: var(--color-text-tertiary);
+}
 .dot-sep {
   color: #cbd4df;
 }
 .schedule-cell {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   color: var(--color-text);
   line-height: 18px;
+  white-space: nowrap;
 }
 .schedule-sub {
   display: flex;
@@ -806,13 +829,20 @@ onMounted(() => {
 .row-actions {
   display: flex;
   flex-wrap: nowrap;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
+  padding-left: 10px;
 }
 .row-actions :deep(.el-button.is-link) {
   margin-left: 0;
   padding: 0 2px;
   font-size: 13px;
   white-space: nowrap;
+}
+:deep(.el-table-fixed-column--right) {
+  border-left: 1px solid var(--color-border-light);
+}
+:deep(th.el-table-fixed-column--right) {
+  background: var(--ink-50) !important;
 }
 </style>

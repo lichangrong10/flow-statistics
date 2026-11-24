@@ -118,7 +118,7 @@
 | Input / Select / Textarea | 1px 内描边，2px 圆角；聚焦 1px 实线黑（暗色白），无光晕 |
 | Checkbox / Radio / Switch | 选中用 `--ink-950`（暗色反转为浅色），方角滑轨 |
 | Tabs | 1px 指示条，激活黑/白粗体；`DimensionTabs` 为发际线分段控件 |
-| Table | 表头 11px 大写宽字距、`--ink-50` 底、1px 下边框；行高 48；无斑马纹 |
+| Table | 表头 11px 大写宽字距、`--ink-50` 底、1px 下边框；行高 48；无斑马纹。计划表：单号并入计划名称、曝光量合并为「实际 / 计划」、排期单行、厂商显示数量+悬停名单、操作列独立发际线 |
 | Pagination | 方角页码，选中黑底白字（暗色反转） |
 | Tag / Badge | 全部单色发际线标签；状态用 `StatusTag`（8px 语义点 + 中性文字） |
 | Tooltip / Dropdown / Modal / Drawer / Toast | 1px 边框、2px 圆角、无阴影；遮罩 `rgba(17,17,16,.4)` |
