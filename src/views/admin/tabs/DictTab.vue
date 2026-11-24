@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import type { AgeDict, ChannelDict, MetricDict } from '@/admin/types';
-import { listAges, listChannels, listMetrics, updateAge, updateChannel, updateMetric } from '@/admin/system';
+import type { ChannelDict } from '@/admin/types';
+import { listChannels, updateChannel } from '@/admin/system';
 import { BID_MODE_OPTIONS } from '@/admin/domain';
-import { IS_BACKEND_MODE } from '@/admin/config';
 import { formatDateTime } from '@/admin/format';
 import { errorMessage } from '@/admin/error';
 import ChannelIcon from '@/components/ChannelIcon.vue';
@@ -15,20 +14,11 @@ const props = withDefaults(defineProps<{ refreshToken?: number }>(), { refreshTo
 const loading = ref(false);
 const savingKey = ref('');
 const channels = ref<ChannelDict[]>([]);
-const ages = ref<AgeDict[]>([]);
-const metrics = ref<MetricDict[]>([]);
 
 async function loadAll(): Promise<void> {
   loading.value = true;
   try {
-    const [channelList, ageList, metricList] = await Promise.all([
-      listChannels(),
-      listAges(),
-      listMetrics()
-    ]);
-    channels.value = channelList;
-    ages.value = ageList;
-    metrics.value = metricList;
+    channels.value = await listChannels();
   } catch (error) {
     ElMessage.error(errorMessage(error, '字典配置加载失败'));
   } finally {
@@ -74,92 +64,6 @@ function handleChannelBidMode(row: ChannelDict): void {
   void patchChannel(row, { bidMode: row.bidMode }, '默认出价方式已更新');
 }
 
-/* ============================ 年龄段字典 ============================ */
-
-async function patchAge(row: AgeDict, patch: Partial<AgeDict>, successText: string): Promise<void> {
-  if (IS_BACKEND_MODE) {
-    ElMessage.warning('后端未提供年龄段/指标口径写接口，当前为只读');
-    await loadAll();
-    return;
-  }
-  savingKey.value = `age:${row.value}`;
-  try {
-    const updated = await updateAge(row.value, patch);
-    ages.value = ages.value
-      .map((item) => (item.value === updated.value ? updated : item))
-      .sort((a, b) => a.sort - b.sort);
-    ElMessage.success(successText);
-  } catch (error) {
-    ElMessage.error(errorMessage(error, '年龄段配置保存失败'));
-    await loadAll();
-  } finally {
-    savingKey.value = '';
-  }
-}
-
-function handleAgeEnabled(row: AgeDict): void {
-  void patchAge(row, { enabled: row.enabled }, row.enabled ? '年龄段已启用' : '年龄段已停用');
-}
-
-function handleAgeSort(row: AgeDict): void {
-  void patchAge(row, { sort: row.sort }, '年龄段排序已更新');
-}
-
-/* ============================ 指标口径 ============================ */
-
-function saveMetric(row: MetricDict): void {
-  if (IS_BACKEND_MODE) {
-    ElMessage.warning('后端未提供年龄段/指标口径写接口，当前为只读');
-    void loadAll();
-    return;
-  }
-  const name = row.name.trim();
-  const formula = row.formula.trim();
-  if (!name) {
-    ElMessage.warning('指标名称不能为空');
-    void loadAll();
-    return;
-  }
-  if (!formula) {
-    ElMessage.warning('计算公式不能为空');
-    void loadAll();
-    return;
-  }
-  savingKey.value = `metric:${row.key}`;
-  void (async () => {
-    try {
-      const updated = await updateMetric(row.key, {
-        name,
-        formula,
-        decimals: row.decimals,
-        visible: row.visible
-      });
-      metrics.value = metrics.value.map((item) => (item.key === updated.key ? updated : item));
-      ElMessage.success(`指标「${updated.name}」已保存`);
-    } catch (error) {
-      ElMessage.error(errorMessage(error, '指标口径保存失败'));
-      await loadAll();
-    } finally {
-      savingKey.value = '';
-    }
-  })();
-}
-
-function handleMetricVisible(row: MetricDict): void {
-  savingKey.value = `metric:${row.key}`;
-  void (async () => {
-    try {
-      const updated = await updateMetric(row.key, { visible: row.visible });
-      metrics.value = metrics.value.map((item) => (item.key === updated.key ? updated : item));
-      ElMessage.success(updated.visible ? '该指标将在看板展示' : '该指标已从看板隐藏');
-    } catch (error) {
-      ElMessage.error(errorMessage(error, '看板展示配置保存失败'));
-      await loadAll();
-    } finally {
-      savingKey.value = '';
-    }
-  })();
-}
 
 watch(
   () => props.refreshToken,
@@ -236,97 +140,6 @@ onMounted(() => {
       </el-table>
     </section>
 
-    <!-- 年龄段字典 -->
-    <section class="section">
-      <div class="section__head">
-        <h3 class="card-title">年龄段字典</h3>
-        <span class="section__hint">停用后不再出现在人群定向的年龄段选项中，排序值越小越靠前</span>
-      </div>
-      <el-table :data="ages" border size="small">
-        <el-table-column prop="value" label="年龄段" width="140" />
-        <el-table-column label="是否启用" width="110" align="center">
-          <template #default="{ row }">
-            <el-switch
-              v-model="row.enabled"
-              :loading="savingKey === `age:${row.value}`"
-              @change="handleAgeEnabled(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="排序" width="140">
-          <template #default="{ row }">
-            <el-input-number
-              v-model="row.sort"
-              :min="1"
-              :max="99"
-              :precision="0"
-              size="small"
-              controls-position="right"
-              :disabled="savingKey === `age:${row.value}`"
-              @change="handleAgeSort(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="更新时间" width="170">
-          <template #default="{ row }">{{ formatDateTime(row.updatedAt) }}</template>
-        </el-table-column>
-        <el-table-column label="说明" min-width="220">
-          <template #default>
-            <span class="dict-note">作用于投放向导「人群定向」的年龄段多选</span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </section>
-
-    <!-- 指标口径 -->
-    <section class="section">
-      <div class="section__head">
-        <h3 class="card-title">指标口径</h3>
-        <span class="section__hint">统一指标名称、计算公式与小数位；关闭「看板展示」后该指标不再出现在看板</span>
-      </div>
-      <el-table :data="metrics" border size="small">
-        <el-table-column label="指标名称" width="170">
-          <template #default="{ row }">
-            <el-input v-model="row.name" size="small" maxlength="12" @change="saveMetric(row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="指标 Key" width="150">
-          <template #default="{ row }">
-            <span class="mono">{{ row.key }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="计算公式" min-width="240">
-          <template #default="{ row }">
-            <el-input v-model="row.formula" size="small" maxlength="60" @change="saveMetric(row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="小数位" width="110">
-          <template #default="{ row }">
-            <el-input-number
-              v-model="row.decimals"
-              :min="0"
-              :max="4"
-              :precision="0"
-              size="small"
-              controls-position="right"
-              @change="saveMetric(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="看板展示" width="110" align="center">
-          <template #default="{ row }">
-            <el-switch
-              v-model="row.visible"
-              :loading="savingKey === `metric:${row.key}`"
-              @change="handleMetricVisible(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="更新时间" width="170">
-          <template #default="{ row }">{{ formatDateTime(row.updatedAt) }}</template>
-        </el-table-column>
-      </el-table>
-    </section>
   </div>
 </template>
 
@@ -335,10 +148,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.dict-alert {
-  margin-bottom: 4px;
 }
 
 .section {
@@ -368,8 +177,4 @@ onMounted(() => {
 }
 
 
-.dict-note {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-}
 </style>

@@ -8,8 +8,7 @@ export const PLATFORM_OPTIONS: { value: PlatformCode; label: string }[] = [
   { value: 'wechat', label: '微信' },
   { value: 'xiaohongshu', label: '小红书' },
   { value: 'kuaishou', label: '快手' },
-  { value: 'baidu', label: '百度' },
-  { value: 'other', label: '其他' }
+  { value: 'baidu', label: '百度' }
 ];
 
 export const CURVE_OPTIONS: { value: CurveType; label: string; hint: string }[] = [
