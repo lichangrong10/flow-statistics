@@ -17,7 +17,7 @@ import { computed } from 'vue'
 import type { ChannelCode } from '@/types'
 import { CHANNEL_META } from '@/constants'
 
-const props = withDefaults(defineProps<{ channel: ChannelCode | string; size?: number }>(), {
+const props = withDefaults(defineProps<{ channel?: ChannelCode | string; size?: number }>(), {
   size: 18,
 })
 
@@ -37,6 +37,7 @@ const COLORS: Record<string, string> = {
 }
 
 const meta = computed(() => {
+  if (!props.channel) return { label: '—', short: '—' }
   if (props.channel === 'other') return { label: '其他', short: '其' }
   return (
     CHANNEL_META[props.channel as ChannelCode] ?? {
@@ -46,9 +47,9 @@ const meta = computed(() => {
   )
 })
 const label = computed(() => meta.value.label)
-const iconPath = computed(() => ICONS[props.channel] ?? '')
+const iconPath = computed(() => (props.channel ? ICONS[props.channel] ?? '' : ''))
 const fill = computed(() =>
-  props.channel === 'xiaohongshu' ? '#ffffff' : (COLORS[props.channel] ?? 'currentColor'),
+  props.channel === 'xiaohongshu' ? '#ffffff' : (COLORS[props.channel ?? ''] ?? 'currentColor'),
 )
 const fallback = computed(() => meta.value.short ?? label.value.slice(0, 1))
 </script>

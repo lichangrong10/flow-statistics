@@ -11,17 +11,14 @@ import type { CampaignStatus } from '@/types'
 import { STATUS_META } from '@/constants'
 
 const props = defineProps<{
-  status: CampaignStatus
+  status?: CampaignStatus
   size?: 'small' | 'default'
 }>()
 
-const meta = computed(
-  () =>
-    STATUS_META[props.status] ?? {
-      label: props.status,
-      color: '#858076',
-    },
-)
+const meta = computed(() => {
+  if (!props.status) return { label: '—', color: '#a8a298' }
+  return STATUS_META[props.status] ?? { label: props.status, color: '#858076' }
+})
 </script>
 
 <style scoped>

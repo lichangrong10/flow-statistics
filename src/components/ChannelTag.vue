@@ -1,6 +1,6 @@
 <template>
   <span class="channel-tag">
-    <ChannelIcon :channel="channel" :size="18" />
+    <ChannelIcon v-if="channel" :channel="channel" :size="18" />
     <span class="channel-name">{{ meta.label }}</span>
   </span>
 </template>
@@ -11,14 +11,16 @@ import type { ChannelCode } from '@/types'
 import { CHANNEL_META } from '@/constants'
 import ChannelIcon from '@/components/ChannelIcon.vue'
 
-const props = defineProps<{ channel: ChannelCode }>()
-const meta = computed(
-  () =>
+const props = defineProps<{ channel?: ChannelCode }>()
+const meta = computed(() => {
+  if (!props.channel) return { label: '—', short: '—' }
+  return (
     CHANNEL_META[props.channel] ?? {
       label: props.channel,
       short: String(props.channel).slice(0, 1),
-    },
-)
+    }
+  )
+})
 </script>
 
 <style scoped>
