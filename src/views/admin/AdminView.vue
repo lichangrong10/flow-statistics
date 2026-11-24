@@ -85,4 +85,16 @@ const tabs = [
     min-width: 1120px;
   }
 }
+@media (max-width: 720px) {
+  .admin-tabs :deep(.el-pagination) {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .admin-tabs :deep(.el-pagination__sizes),
+  .admin-tabs :deep(.el-pagination__jump) {
+    display: none;
+  }
+}
 </style>

@@ -3,6 +3,7 @@
     <div v-if="$slots.toolbar" class="table-toolbar">
       <slot name="toolbar" />
     </div>
+    <div class="mobile-scroll-hint">左右滑动查看完整表格</div>
     <div class="table-scroll">
       <el-table
       :data="data"
@@ -159,5 +160,38 @@ function onSizeChange(value: number) {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+}
+.mobile-scroll-hint {
+  display: none;
+}
+@media (max-width: 720px) {
+  .mobile-scroll-hint {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+  }
+  .table-pager {
+    justify-content: center;
+  }
+  .table-pager :deep(.el-pagination) {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .table-pager :deep(.el-pagination__sizes),
+  .table-pager :deep(.el-pagination__jump) {
+    display: none;
+  }
+}
+@media (max-width: 560px) {
+  .table-pager :deep(.el-pagination__total) {
+    display: none;
+  }
+  .table-pager :deep(.el-pagination .btn-prev),
+  .table-pager :deep(.el-pagination .btn-next) {
+    margin: 0;
+  }
 }
 </style>

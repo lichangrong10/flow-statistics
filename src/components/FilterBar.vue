@@ -54,4 +54,36 @@ const emit = defineEmits<{ search: []; reset: [] }>()
   gap: 12px;
   flex: none;
 }
+@media (max-width: 720px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+  .fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+  .fields :deep(.field) {
+    width: 100% !important;
+  }
+  .fields :deep(.el-input),
+  .fields :deep(.el-select),
+  .fields :deep(.el-date-editor) {
+    width: 100% !important;
+    max-width: 100%;
+  }
+  .actions {
+    width: 100%;
+    justify-content: stretch;
+    gap: 8px;
+  }
+  .actions :deep(.el-button) {
+    flex: 1;
+    margin-left: 0;
+  }
+}
 </style>

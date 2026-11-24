@@ -862,4 +862,39 @@ onMounted(() => {
 .list-card :deep(.el-table) {
   min-width: 1100px;
 }
+@media (max-width: 720px) {
+  .list-card {
+    padding: 14px;
+  }
+  .list-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .list-meta {
+    width: 100%;
+    font-size: 12.5px;
+  }
+  .list-actions {
+    width: 100%;
+    gap: 8px 12px;
+  }
+  .list-actions :deep(.el-button) {
+    margin-left: 0;
+  }
+  .divider {
+    display: none;
+  }
+  .status-tabs {
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 4px 2px;
+  }
+  .status-tab {
+    height: 28px;
+    padding: 0 8px;
+    gap: 4px;
+    font-size: 12px;
+  }
+}
 </style>
