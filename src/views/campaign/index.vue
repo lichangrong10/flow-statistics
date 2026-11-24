@@ -47,12 +47,6 @@
         </el-select>
       </div>
       <div class="field">
-        <span class="field-label">状态</span>
-        <el-select v-model="filters.status" clearable placeholder="全部状态" style="width: 130px">
-          <el-option v-for="item in STATUS_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </div>
-      <div class="field">
         <span class="field-label">投放周期</span>
         <el-date-picker
           v-model="filters.dateRange"
@@ -98,6 +92,28 @@
             <el-radio-button :value="100">100</el-radio-button>
           </el-radio-group>
         </div>
+      </div>
+
+      <div class="status-tabs" role="tablist" aria-label="按状态筛选">
+        <button
+          type="button"
+          class="status-tab"
+          :class="{ active: !filters.status }"
+          @click="selectStatus('')"
+        >
+          全部
+        </button>
+        <button
+          v-for="item in STATUS_OPTIONS"
+          :key="item.value"
+          type="button"
+          class="status-tab"
+          :class="{ active: filters.status === item.value }"
+          @click="selectStatus(item.value)"
+        >
+          <span class="status-dot" :style="{ background: STATUS_META[item.value].color }" />
+          {{ item.label }}
+        </button>
       </div>
 
       <DataTable
@@ -233,7 +249,7 @@ import {
 } from '@/api/campaign'
 import { createReportTask } from '@/api/report'
 import type { CampaignListItem, CampaignStatus, ChannelCode, TableColumn } from '@/types'
-import { STATUS_OPTIONS } from '@/constants'
+import { STATUS_META, STATUS_OPTIONS } from '@/constants'
 import { lastNDays } from '@/utils/date'
 import { formatNumber, formatPercent } from '@/utils/format'
 
@@ -366,6 +382,13 @@ async function load() {
   } finally {
     loading.value = false
   }
+}
+
+function selectStatus(status: CampaignStatus | '') {
+  if (filters.status === status) return
+  filters.status = status
+  page.value = 1
+  void load()
 }
 
 function onSearch() {
@@ -851,5 +874,48 @@ onMounted(() => {
 }
 :deep(th.el-table-fixed-column--right) {
   background: var(--ink-50) !important;
+}
+.status-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.status-tabs::-webkit-scrollbar {
+  display: none;
+}
+.status-tab {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--font-size-aux);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.status-tab:hover {
+  background: var(--ink-25);
+  color: var(--color-text);
+}
+.status-tab.active {
+  background: var(--ink-950);
+  border-color: var(--ink-950);
+  color: var(--color-text-inverse);
+}
+.status-tab .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
 }
 </style>
