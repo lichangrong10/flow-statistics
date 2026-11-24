@@ -338,6 +338,10 @@ const completionOption = computed<EChartsOption>(() => {
   const names = items.map((item) =>
     item.name.length > 14 ? `${item.name.slice(0, 14)}…` : item.name,
   )
+  const maxRate = Math.max(
+    100,
+    ...items.map((item) => Number(item.completionRate) * 100),
+  )
   return {
     tooltip: {
       trigger: 'axis',
@@ -351,7 +355,19 @@ const completionOption = computed<EChartsOption>(() => {
       },
     },
     grid: { left: 8, right: 48, top: 12, bottom: 8, containLabel: true },
-    xAxis: { type: 'value', axisLabel: { formatter: '{value}%' }, splitLine: { lineStyle: { color: colors.grid, type: [4, 4] } } },
+    xAxis: {
+      type: 'value',
+      min: 0,
+      max: Math.ceil(maxRate / 25) * 25,
+      interval: 50,
+      axisLabel: {
+        formatter: '{value}%',
+        interval: 50,
+        color: colors.axis,
+        fontSize: 9.5,
+      },
+      splitLine: { lineStyle: { color: colors.grid, type: [4, 4] } },
+    },
     yAxis: {
       type: 'category',
       data: names,
@@ -551,6 +567,17 @@ onMounted(loadAll)
   .span-8,
   .span-12 {
     grid-column: span 1;
+  }
+}
+@media (max-width: 720px) {
+  .card-head {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .legend-note {
+    flex: none;
+    white-space: nowrap;
+    margin-left: auto;
   }
 }
 </style>
