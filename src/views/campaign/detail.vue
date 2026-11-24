@@ -558,7 +558,7 @@ const calendarCells = computed(() => {
     const date = cursor.format('YYYY-MM-DD')
     const impressions = map.get(date) ?? 0
     const ratio = impressions / max
-    const level = impressions === 0 ? 0 : ratio > 0.66 ? 3 : ratio > 0.33 ? 2 : 1
+    const level = impressions === 0 ? 0 : ratio >= 0.75 ? 3 : ratio >= 0.45 ? 2 : 1
     cells.push({ date, day: cursor.date(), level, impressions })
     cursor = cursor.add(1, 'day')
   }
@@ -1194,7 +1194,8 @@ onMounted(loadDetail)
   margin-left: 4px;
 }
 .legend-block.level-0 {
-  background: var(--ink-50);
+  background: transparent;
+  border: 1px dashed var(--color-border);
 }
 .legend-block.level-1 {
   background: var(--ink-100);
@@ -1232,7 +1233,8 @@ onMounted(loadDetail)
   background: transparent;
 }
 .calendar-cell.level-0 {
-  background: var(--ink-50);
+  background: transparent;
+  border: 1px dashed var(--color-border);
   color: var(--color-text-tertiary);
 }
 .calendar-cell.level-1 {
