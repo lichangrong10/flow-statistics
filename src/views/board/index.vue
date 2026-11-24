@@ -109,7 +109,7 @@
         <div class="card-head">
           <div>
             <div class="card-title">计划完成率</div>
-            <div class="card-sub">按完成率排序，超过 100% 以强调色标识</div>
+            <div class="card-sub">按完成率排序，展示前 10 条；超过 100% 以强调色标识</div>
           </div>
           <span class="legend-note">
             <span class="lg-dot done" /> 已达成
@@ -117,7 +117,7 @@
           </span>
         </div>
         <div class="card-body">
-          <BaseChart :option="completionOption" :height="280" :loading="loadingCompletion" :empty="!completionItems.length" />
+          <BaseChart :option="completionOption" :height="360" :loading="loadingCompletion" :empty="!completionItems.length" />
         </div>
       </div>
     </div>
@@ -328,6 +328,7 @@ const completionOption = computed<EChartsOption>(() => {
   const items = [...completionItems.value]
     .filter((item) => Number(item.completionRate) > 0)
     .sort((a, b) => Number(a.completionRate) - Number(b.completionRate))
+    .slice(-10)
   const names = items.map((item) =>
     item.name.length > 14 ? `${item.name.slice(0, 14)}…` : item.name,
   )
@@ -343,7 +344,7 @@ const completionOption = computed<EChartsOption>(() => {
         return `${item.name}<br/>完成率 ${formatPercent(item.completionRate, 2)}<br/>实际曝光 ${formatNumber(item.impressions)}<br/>计划曝光 ${formatNumber(item.targetImpressions)}`
       },
     },
-    grid: { left: 8, right: 40, top: 12, bottom: 8, containLabel: true },
+    grid: { left: 8, right: 48, top: 12, bottom: 8, containLabel: true },
     xAxis: { type: 'value', axisLabel: { formatter: '{value}%' }, splitLine: { lineStyle: { color: colors.grid, type: [4, 4] } } },
     yAxis: {
       type: 'category',
@@ -362,7 +363,7 @@ const completionOption = computed<EChartsOption>(() => {
             borderRadius: [0, 5, 5, 0],
           },
         })),
-        barWidth: 10,
+        barWidth: 12,
         label: {
           show: true,
           position: 'right',

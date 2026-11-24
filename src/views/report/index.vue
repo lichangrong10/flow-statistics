@@ -35,14 +35,6 @@
             </button>
           </div>
 
-          <div class="field">
-            <label>文件格式</label>
-            <el-radio-group v-model="form.format">
-              <el-radio-button value="xlsx">xlsx</el-radio-button>
-              <el-radio-button value="pdf" :disabled="true">pdf</el-radio-button>
-            </el-radio-group>
-            <span class="field-hint">xlsx 便于二次分析；后端 PDF 生成环境缺少字体，暂不可用</span>
-          </div>
 
           <div class="field">
             <label>投放计划</label>
