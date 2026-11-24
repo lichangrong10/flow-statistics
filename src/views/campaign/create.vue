@@ -78,12 +78,7 @@
                     :class="{ selected: form.channels.includes(channel.code) }"
                     @click="toggleChannel(channel.code)"
                   >
-                    <span
-                      class="channel-icon"
-                      :style="{ background: channel.soft, color: channel.color }"
-                    >
-                      {{ channel.short }}
-                    </span>
+                    <ChannelIcon :channel="channel.code as ChannelCode" :size="20" />
                     <span class="channel-label">{{ channel.label }}</span>
                     <el-icon v-if="form.channels.includes(channel.code)" class="channel-check">
                       <Check />
@@ -434,6 +429,7 @@ import {
   Picture,
 } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader.vue'
+import ChannelIcon from '@/components/ChannelIcon.vue'
 import { useAppStore } from '@/stores/app'
 import { useDictStore } from '@/stores/dict'
 import { createCampaign, getCampaign, updateCampaign } from '@/api/campaign'
@@ -987,17 +983,6 @@ onMounted(async () => {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
   
-}
-.channel-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-  flex: none;
 }
 .channel-label {
   font-size: 13px;

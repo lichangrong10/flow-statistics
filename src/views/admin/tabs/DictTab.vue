@@ -7,6 +7,8 @@ import { BID_MODE_OPTIONS } from '@/admin/domain';
 import { IS_BACKEND_MODE } from '@/admin/config';
 import { formatDateTime } from '@/admin/format';
 import { errorMessage } from '@/admin/error';
+import ChannelIcon from '@/components/ChannelIcon.vue';
+import type { ChannelCode } from '@/types';
 
 const props = withDefaults(defineProps<{ refreshToken?: number }>(), { refreshToken: 0 });
 
@@ -183,7 +185,7 @@ onMounted(() => {
       <el-table :data="channels" border size="small">
         <el-table-column label="图标" width="70" align="center">
           <template #default="{ row }">
-            <span class="channel-icon">{{ row.icon }}</span>
+            <ChannelIcon :channel="row.code as ChannelCode" :size="20" />
           </template>
         </el-table-column>
         <el-table-column label="渠道编码" width="130">
@@ -365,20 +367,6 @@ onMounted(() => {
   color: var(--color-text);
 }
 
-.channel-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-xs);
-  border: var(--hairline);
-  background: var(--ink-50);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-micro);
-  font-weight: 600;
-  line-height: 1;
-}
 
 .dict-note {
   font-size: 12px;

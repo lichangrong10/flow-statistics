@@ -1,6 +1,6 @@
 <template>
   <span class="channel-tag">
-    <span class="channel-icon">{{ meta.short }}</span>
+    <ChannelIcon :channel="channel" :size="18" />
     <span class="channel-name">{{ meta.label }}</span>
   </span>
 </template>
@@ -9,6 +9,7 @@
 import { computed } from 'vue'
 import type { ChannelCode } from '@/types'
 import { CHANNEL_META } from '@/constants'
+import ChannelIcon from '@/components/ChannelIcon.vue'
 
 const props = defineProps<{ channel: ChannelCode }>()
 const meta = computed(
@@ -26,20 +27,6 @@ const meta = computed(
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-}
-.channel-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-xs);
-  border: var(--hairline);
-  background: transparent;
-  color: var(--color-text-secondary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-micro);
-  font-weight: 600;
-  flex: none;
 }
 .channel-name {
   font-size: var(--font-size-aux);

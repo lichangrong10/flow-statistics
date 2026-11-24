@@ -13,11 +13,12 @@ import {
 } from '@/admin/system';
 import type { VendorPayload } from '@/admin/system';
 import { PLATFORM_OPTIONS } from '@/admin/constants';
-import { PLATFORM_LABELS, PLATFORM_TAG_TYPES } from '@/admin/domain';
+import { PLATFORM_LABELS } from '@/admin/domain';
 import { formatDateTime, maskPhone } from '@/admin/format';
 import { errorMessage } from '@/admin/error';
 import { isPhone, isVendorCode } from '@/admin/validate';
 import EmptyState from '@/admin/components/EmptyState.vue';
+import ChannelIcon from '@/components/ChannelIcon.vue';
 
 const props = withDefaults(defineProps<{ refreshToken?: number }>(), { refreshToken: 0 });
 
@@ -260,7 +261,12 @@ onMounted(() => {
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          />
+          >
+            <span class="platform-option">
+              <ChannelIcon :channel="item.value" :size="16" />
+              <span>{{ item.label }}</span>
+            </span>
+          </el-option>
         </el-select>
         <el-select v-model="query.status" class="filter-select" placeholder="全部状态" clearable>
           <el-option label="启用" :value="1" />
@@ -273,21 +279,22 @@ onMounted(() => {
     </div>
 
     <el-table v-loading="loading" :data="rows" row-key="id" border stripe>
-      <el-table-column label="厂商编码" min-width="140">
+      <el-table-column label="厂商编码" min-width="120">
         <template #default="{ row }">
           <span class="mono">{{ row.code }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="厂商名称" min-width="200" show-overflow-tooltip />
+      <el-table-column prop="name" label="厂商名称" min-width="160" show-overflow-tooltip />
       <el-table-column label="所属平台" width="120">
         <template #default="{ row }">
-          <el-tag :type="PLATFORM_TAG_TYPES[row.platform as PlatformCode]" size="small" effect="light">
-            {{ PLATFORM_LABELS[row.platform as PlatformCode] }}
-          </el-tag>
+          <span class="platform-cell">
+            <ChannelIcon :channel="row.platform as PlatformCode" :size="17" />
+            <span>{{ PLATFORM_LABELS[row.platform as PlatformCode] }}</span>
+          </span>
         </template>
       </el-table-column>
-      <el-table-column prop="contact" label="联系人" width="120" />
-      <el-table-column label="联系电话" width="170">
+      <el-table-column prop="contact" label="联系人" width="100" />
+      <el-table-column label="联系电话" width="150">
         <template #default="{ row }">
           <span class="mono">{{ revealed[row.id] ? row.phone : maskPhone(row.phone) }}</span>
           <el-button
@@ -299,12 +306,12 @@ onMounted(() => {
           />
         </template>
       </el-table-column>
-      <el-table-column label="关联计划" width="110" align="center">
+      <el-table-column label="关联计划" width="90" align="center">
         <template #default="{ row }">
           <span :class="row.planCount > 0 ? 'plan-count is-used' : 'plan-count'">{{ row.planCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="110">
+      <el-table-column label="状态" width="100">
         <template #default="{ row }">
           <el-switch
             :model-value="row.status"
@@ -317,10 +324,10 @@ onMounted(() => {
           />
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="160">
+      <el-table-column label="更新时间" width="150">
         <template #default="{ row }">{{ formatDateTime(row.updatedAt) }}</template>
       </el-table-column>
-      <el-table-column label="操作" width="130" fixed="right">
+      <el-table-column label="操作" width="120" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="openEdit(row)">编辑</el-button>
           <el-tooltip
@@ -372,7 +379,12 @@ onMounted(() => {
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            />
+            >
+              <span class="platform-option">
+                <ChannelIcon :channel="item.value" :size="16" />
+                <span>{{ item.label }}</span>
+              </span>
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="联系人" prop="contact">
@@ -440,6 +452,16 @@ onMounted(() => {
 }
 
 .form-select {
+  width: 100%;
+}
+.platform-cell,
+.platform-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.platform-option {
+  display: flex;
   width: 100%;
 }
 </style>
