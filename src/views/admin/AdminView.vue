@@ -64,6 +64,14 @@ const tabs = [
   height: 46px;
   font-size: 14px;
 }
+.admin-tabs :deep(.el-table) {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.admin-tabs :deep(.el-table__inner-wrapper) {
+  border-radius: inherit;
+  overflow: hidden;
+}
 .tab-label {
   display: inline-flex;
   align-items: center;

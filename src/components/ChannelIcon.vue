@@ -1,6 +1,7 @@
 <template>
   <span
     class="channel-icon"
+    :class="{ 'is-xiaohongshu': channel === 'xiaohongshu' }"
     :style="{ width: `${size}px`, height: `${size}px` }"
     :title="label"
   >
@@ -46,7 +47,9 @@ const meta = computed(() => {
 })
 const label = computed(() => meta.value.label)
 const iconPath = computed(() => ICONS[props.channel] ?? '')
-const fill = computed(() => COLORS[props.channel] ?? 'currentColor')
+const fill = computed(() =>
+  props.channel === 'xiaohongshu' ? '#ffffff' : (COLORS[props.channel] ?? 'currentColor'),
+)
 const fallback = computed(() => meta.value.short ?? label.value.slice(0, 1))
 </script>
 
@@ -57,6 +60,12 @@ const fallback = computed(() => meta.value.short ?? label.value.slice(0, 1))
   justify-content: center;
   flex: none;
   color: var(--color-text);
+}
+.channel-icon.is-xiaohongshu {
+  box-sizing: border-box;
+  padding: 2px;
+  background: #ff2442;
+  border-radius: var(--radius-xs);
 }
 .channel-icon svg {
   display: block;
