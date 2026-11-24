@@ -485,7 +485,7 @@ onBeforeUnmount(stopPolling)
   padding: 0 5px;
   height: 18px;
   line-height: 18px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   background: var(--ink-50);
   color: var(--color-text-tertiary);
   font-size: 10.5px;

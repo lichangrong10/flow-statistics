@@ -1238,14 +1238,14 @@ onMounted(async () => {
 .budget-bar {
   margin-top: 8px;
   height: 6px;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   background: var(--ink-50);
   overflow: hidden;
 }
 .budget-fill {
   display: block;
   height: 100%;
-  border-radius: 3px;
+  border-radius: var(--radius-xs);
   background: var(--ink-950);
   transition: width 0.3s ease;
 }

@@ -60,7 +60,7 @@ const tooltipBase = () => {
 
 export interface LineSeriesInput {
   name: string
-  data: number[]
+  data: (number | null)[]
   color?: string
   area?: boolean
   dashed?: boolean

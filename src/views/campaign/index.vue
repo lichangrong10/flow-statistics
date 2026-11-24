@@ -178,7 +178,7 @@
         <template #completion="{ row }">
           <span
             v-if="row.completionRate"
-            class="num right completion"
+            class="num completion"
             :class="{ over: Number(row.completionRate) >= 1 }"
           >
             {{ formatPercent(row.completionRate as string, 2) }}
@@ -295,14 +295,14 @@ const canArchive = computed(
 )
 
 const columns: TableColumn[] = [
-  { prop: 'name', label: '计划', width: 220, slot: 'name' },
-  { prop: 'status', label: '状态', minWidth: 90, slot: 'status' },
-  { prop: 'channel', label: '渠道', minWidth: 84, slot: 'channel' },
-  { prop: 'vendors', label: '厂商', minWidth: 54, slot: 'vendors' },
-  { prop: 'startDate', label: '排期', minWidth: 170, slot: 'schedule' },
-  { prop: 'impressions', label: '曝光量（实际 / 计划）', minWidth: 150, align: 'right', slot: 'exposure' },
-  { prop: 'completionRate', label: '完成率', minWidth: 84, align: 'right', slot: 'completion' },
-  { prop: 'actions', label: '操作', width: 166, fixed: 'right', slot: 'actions' },
+  { prop: 'name', label: '计划', width: 220, align: 'center', slot: 'name' },
+  { prop: 'status', label: '状态', minWidth: 90, align: 'center', slot: 'status' },
+  { prop: 'channel', label: '渠道', minWidth: 84, align: 'center', slot: 'channel' },
+  { prop: 'vendors', label: '厂商', minWidth: 54, align: 'center', slot: 'vendors' },
+  { prop: 'startDate', label: '排期', minWidth: 170, align: 'center', slot: 'schedule' },
+  { prop: 'impressions', label: '曝光量（实际 / 计划）', minWidth: 150, align: 'center', slot: 'exposure' },
+  { prop: 'completionRate', label: '完成率', minWidth: 84, align: 'center', slot: 'completion' },
+  { prop: 'actions', label: '操作', width: 166, fixed: 'right', align: 'center', slot: 'actions' },
 ]
 
 function str(value: unknown): string {
@@ -729,6 +729,7 @@ onMounted(() => {
 }
 .name-cell {
   min-width: 0;
+  text-align: center;
 }
 .name-text {
   font-size: 13.5px;
@@ -745,6 +746,7 @@ onMounted(() => {
   margin-top: 2px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-size: 11.5px;
   color: var(--color-text-tertiary);
@@ -762,7 +764,7 @@ onMounted(() => {
 .exposure-cell {
   display: flex;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 6px;
   white-space: nowrap;
 }
@@ -782,6 +784,7 @@ onMounted(() => {
 .schedule-cell {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   font-size: 12px;
   color: var(--color-text);
@@ -807,6 +810,9 @@ onMounted(() => {
   font-size: 11px;
 }
 .completion {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
   white-space: nowrap;
 }
 :deep(.row-highlight td.el-table__cell) {
@@ -831,7 +837,8 @@ onMounted(() => {
   flex-wrap: nowrap;
   gap: 12px;
   align-items: center;
-  padding-left: 10px;
+  justify-content: center;
+  padding-left: 0;
 }
 .row-actions :deep(.el-button.is-link) {
   margin-left: 0;

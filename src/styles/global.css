@@ -62,7 +62,7 @@ ul {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--ink-300);
-  border-radius: 0;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ink-400);
@@ -358,7 +358,7 @@ ul {
 .el-dropdown__popper,
 .el-picker__popper,
 .el-popper {
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-md);
   border: var(--hairline) !important;
   box-shadow: none !important;
   background: var(--el-bg-color-overlay);
@@ -520,7 +520,7 @@ ul {
   font-weight: 400;
 }
 .el-pagination.is-background .el-pager li {
-  border-radius: 0;
+  border-radius: var(--radius-xs);
   background: transparent;
   font-weight: 400;
   border: var(--hairline);
@@ -533,7 +533,7 @@ ul {
 }
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .btn-next {
-  border-radius: 0;
+  border-radius: var(--radius-xs);
   background: transparent;
   border: var(--hairline);
   color: var(--color-text-secondary);
@@ -604,7 +604,7 @@ ul {
 }
 
 .el-radio-button__inner {
-  border-radius: 0 !important;
+  border-radius: var(--radius-xs) !important;
   border-color: var(--color-border);
   color: var(--color-text-secondary);
   box-shadow: none !important;
@@ -675,11 +675,11 @@ ul {
 
 .el-progress-bar__outer {
   background: var(--ink-100);
-  border-radius: 0;
+  border-radius: var(--radius-xs);
 }
 .el-progress-bar__inner {
   background: var(--ink-950);
-  border-radius: 0;
+  border-radius: var(--radius-xs);
 }
 .el-progress__text {
   color: var(--color-text-secondary);
@@ -688,7 +688,8 @@ ul {
 
 .el-dropdown-menu__item {
   color: var(--color-text-secondary);
-  border-radius: 0;
+  border-radius: var(--radius-xs);
+  margin: 0 4px;
 }
 .el-dropdown-menu__item:not(.is-disabled):hover {
   background: var(--ink-50);

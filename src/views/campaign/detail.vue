@@ -1189,7 +1189,7 @@ onMounted(loadDetail)
 .legend-block {
   width: 10px;
   height: 10px;
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   display: inline-block;
   margin-left: 4px;
 }

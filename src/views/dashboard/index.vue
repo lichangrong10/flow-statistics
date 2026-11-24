@@ -280,8 +280,14 @@ const trendOption = computed(() => {
     )
   }
   const actual = trend.value.map((item) => Number(item.actual))
-  const target = trend.value.map((item) => Number(item.target))
-  const hasTarget = target.some((value) => value > 0)
+  const target = (() => {
+    const values = trend.value.map((item) => Number(item.target))
+    const positive = values.filter((value) => value > 0).sort((a, b) => a - b)
+    const median = positive.length ? positive[Math.floor(positive.length / 2)] : 0
+    // 后端偶发把累计目标写到某一天（例如 1.6 亿/天），会把 Y 轴拉爆
+    return values.map((value) => (median > 0 && value > median * 10 ? null : value))
+  })()
+  const hasTarget = target.some((value) => value !== null && value > 0)
   return lineOption(
     dates,
     hasTarget
