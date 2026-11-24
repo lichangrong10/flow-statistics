@@ -93,13 +93,21 @@ async function handleExport(): Promise<void> {
   if (exporting.value) return;
   exporting.value = true;
   try {
-    const data = await listLogs(buildQuery(1, 5000));
-    if (data.list.length === 0) {
+    // 后端 pageSize 上限较小，导出时分页拉取，避免 5000 触发 400
+    const all: Awaited<ReturnType<typeof listLogs>>['list'] = [];
+    let pageNo = 1;
+    while (all.length < 5000) {
+      const pageData = await listLogs(buildQuery(pageNo, 100));
+      all.push(...pageData.list);
+      if (pageData.list.length < 100 || all.length >= pageData.total) break;
+      pageNo += 1;
+    }
+    if (all.length === 0) {
       ElMessage.warning('当前筛选条件下没有可导出的操作日志');
       return;
     }
     const header = ['时间', '操作人', '身份', '操作', '对象类型', '对象名称', '详情'];
-    const body = data.list.map((log) => [
+    const body = all.map((log) => [
       log.time,
       log.operatorName,
       ROLE_LABELS[log.operatorRole],
@@ -109,7 +117,7 @@ async function handleExport(): Promise<void> {
       log.detail ? JSON.stringify(log.detail) : ''
     ]);
     downloadCsv(`操作日志-${dayjs().format('YYYYMMDD-HHmmss')}.csv`, [header, ...body]);
-    ElMessage.success(`已导出 ${data.list.length} 条操作日志`);
+    ElMessage.success(`已导出 ${all.length} 条操作日志`);
   } catch (error) {
     ElMessage.error(errorMessage(error, '导出操作日志失败'));
   } finally {

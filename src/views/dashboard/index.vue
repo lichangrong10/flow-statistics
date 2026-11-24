@@ -156,7 +156,6 @@ import DimensionTabs from '@/components/DimensionTabs.vue'
 import StatusTag from '@/components/StatusTag.vue'
 import ChannelTag from '@/components/ChannelTag.vue'
 import EmptyState from '@/components/EmptyState.vue'
-import { useAppStore } from '@/stores/app'
 import { getDashboardDimensions, getDashboardSummary, getDashboardTrend } from '@/api/dashboard'
 import { getCampaigns } from '@/api/campaign'
 import type { CampaignListItem, DashboardSummary, DimensionValue, TrendPoint } from '@/types'
@@ -165,7 +164,6 @@ import { abbrNumber, formatNumber, formatPercent } from '@/utils/format'
 import { chartColors, donutOption, lineOption } from '@/utils/chart'
 
 const router = useRouter()
-const app = useAppStore()
 
 const period = ref(14)
 const trendMetric = ref('impressions')
@@ -182,7 +180,7 @@ const loadingChannel = ref(true)
 const loadingPending = ref(true)
 const loadingRecent = ref(true)
 
-const projectName = computed(() => app.currentProject?.name ?? '全部项目')
+const projectName = computed(() => '全部项目')
 const headerSubtitle = computed(() => {
   const updated = summary.value?.dataUpdatedAt
     ? `数据更新于 ${dayjs(summary.value.dataUpdatedAt).format('YYYY-MM-DD HH:mm')}`
@@ -335,12 +333,11 @@ async function loadSummaryAndTrend() {
   loadingSummary.value = true
   loadingTrend.value = true
   loadingChannel.value = true
-  const projectId = app.currentProjectId ?? undefined
   try {
     const [summaryData, trendData, channelData] = await Promise.all([
-      getDashboardSummary({ projectId, ...range, compare: 'previous' }),
-      getDashboardTrend({ projectId, ...range, metric: trendMetric.value as 'impressions' }),
-      getDashboardDimensions({ projectId, ...range, dimType: 'channel' }),
+      getDashboardSummary({ ...range, compare: 'previous' }),
+      getDashboardTrend({ ...range, metric: trendMetric.value as 'impressions' }),
+      getDashboardDimensions({ ...range, dimType: 'channel' }),
     ])
     summary.value = summaryData
     trend.value = trendData.items
@@ -382,10 +379,6 @@ function loadAll() {
 }
 
 watch(trendMetric, () => loadSummaryAndTrend())
-watch(
-  () => app.currentProjectId,
-  () => loadAll(),
-)
 
 onMounted(loadAll)
 </script>

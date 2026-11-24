@@ -14,7 +14,7 @@
         <div class="card-head">
           <div>
             <div class="card-title">创建导出任务</div>
-            <div class="card-sub">当前项目：{{ projectName }}</div>
+            <div class="card-sub">数据范围：{{ projectName }}</div>
           </div>
         </div>
         <div class="card-body">
@@ -174,7 +174,6 @@ import { Document, Download, Refresh } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import PageHeader from '@/components/PageHeader.vue'
 import DataTable from '@/components/DataTable.vue'
-import { useAppStore } from '@/stores/app'
 import { getCampaigns } from '@/api/campaign'
 import { createReportTask, downloadReport, getReportTasks } from '@/api/report'
 import type { CampaignListItem, ReportTask, ReportType, TableColumn } from '@/types'
@@ -183,7 +182,6 @@ import { lastNDays } from '@/utils/date'
 import { formatDateTime, formatFileSize } from '@/utils/format'
 
 const route = useRoute()
-const app = useAppStore()
 
 const campaignOptions = ref<CampaignListItem[]>([])
 const tasks = ref<ReportTask[]>([])
@@ -205,7 +203,7 @@ const form = reactive({
   range: [lastNDays(7).from, lastNDays(7).to] as [string, string],
 })
 
-const projectName = computed(() => app.currentProject?.name ?? '全部项目')
+const projectName = computed(() => '全部项目')
 const hasRunning = computed(() =>
   tasks.value.some((item) => item.status === 'pending' || item.status === 'running'),
 )
@@ -308,7 +306,6 @@ async function createTask() {
     await createReportTask({
       type: form.type,
       format: form.format,
-      projectId: app.currentProjectId ?? undefined,
       campaignIds: form.campaignIds.length ? form.campaignIds : undefined,
       from: form.range[0],
       to: form.range[1],

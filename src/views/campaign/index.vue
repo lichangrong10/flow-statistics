@@ -116,27 +116,28 @@
         </button>
       </div>
 
-      <DataTable
-        :columns="columns"
-        :data="rows as unknown as Record<string, unknown>[]"
-        :loading="loading"
-        :total="total"
-        :page="page"
-        :page-size="pageSize"
-        :selectable="true"
-        :show-pager="true"
-        :row-key="'id'"
-        :row-class-name="listRowClass"
-        :empty-type="hasFilter ? 'no-result' : 'no-data'"
-        empty-title=""
-        :empty-desc="hasFilter ? '试试调整筛选条件，或清空后重新查询' : '还没有投放计划，先创建第一条计划吧'"
-        :empty-action="hasFilter ? '' : '新建投放计划'"
-        @selection-change="onSelectionChange"
-        @page-change="onPageChange"
-        @size-change="onPageSizeChange"
-        @row-click="(row) => goDetail(row as unknown as CampaignListItem)"
-        @empty-action="goCreate"
-      >
+      <div class="table-scroll">
+        <DataTable
+          :columns="columns"
+          :data="rows as unknown as Record<string, unknown>[]"
+          :loading="loading"
+          :total="total"
+          :page="page"
+          :page-size="pageSize"
+          :selectable="true"
+          :show-pager="true"
+          :row-key="'id'"
+          :row-class-name="listRowClass"
+          :empty-type="hasFilter ? 'no-result' : 'no-data'"
+          empty-title=""
+          :empty-desc="hasFilter ? '试试调整筛选条件，或清空后重新查询' : '还没有投放计划，先创建第一条计划吧'"
+          :empty-action="hasFilter ? '' : '新建投放计划'"
+          @selection-change="onSelectionChange"
+          @page-change="onPageChange"
+          @size-change="onPageSizeChange"
+          @row-click="(row) => goDetail(row as unknown as CampaignListItem)"
+          @empty-action="goCreate"
+        >
 
         <template #name="{ row }">
               <div class="name-cell">
@@ -216,6 +217,7 @@
           </div>
         </template>
       </DataTable>
+      </div>
     </div>
   </div>
 </template>
@@ -231,7 +233,6 @@ import DataTable from '@/components/DataTable.vue'
 import StatusTag from '@/components/StatusTag.vue'
 import ChannelTag from '@/components/ChannelTag.vue'
 import VendorTags from '@/components/VendorTags.vue'
-import { useAppStore } from '@/stores/app'
 import { useDictStore } from '@/stores/dict'
 import { useUserStore } from '@/stores/user'
 import {
@@ -261,7 +262,6 @@ interface RowAction {
 
 const router = useRouter()
 const route = useRoute()
-const app = useAppStore()
 const user = useUserStore()
 const dict = useDictStore()
 
@@ -301,10 +301,9 @@ const hasFilter = computed(
     filters.dateRange.length === 2,
 )
 
-const subtitle = computed(() => {
-  const project = app.currentProject
-  return `${project?.name ?? '全部项目'} · ${user.isAdmin ? '管理员视图，可见全部计划' : '仅可见本人创建的计划'}`
-})
+const subtitle = computed(
+  () => `全部项目 · ${user.isAdmin ? '管理员视图，可见全部计划' : '仅可见本人创建的计划'}`,
+)
 
 const canArchive = computed(
   () => selection.value.length > 0 && selection.value.every((item) => item.status === 'finished'),
@@ -369,7 +368,6 @@ async function load() {
       code: filters.code.trim(),
       channel: filters.channel,
       status: filters.status,
-      projectId: app.currentProjectId ?? undefined,
       dateFrom: filters.dateRange[0],
       dateTo: filters.dateRange[1],
     })
@@ -634,7 +632,6 @@ async function batchExport() {
       format: 'xlsx',
       from: range.from,
       to: range.to,
-      projectId: app.currentProjectId ?? undefined,
       campaignIds: selection.value.map((item) => item.id),
     })
     ElMessage.success(`已创建导出任务（${selection.value.length} 条计划），可在报表中心下载`)
@@ -674,13 +671,6 @@ async function batchArchive() {
   await load()
 }
 
-watch(
-  () => app.currentProjectId,
-  () => {
-    page.value = 1
-    load()
-  },
-)
 
 onMounted(() => {
   hydrateFromQuery()
@@ -730,12 +720,10 @@ onMounted(() => {
   white-space: nowrap;
   cursor: pointer;
   letter-spacing: 0;
-  border-bottom: 1px dashed transparent;
   line-height: 20px;
 }
 .code-cell:hover {
   color: var(--color-text);
-  border-bottom-color: var(--color-border);
 }
 .copy-icon {
   font-size: 13px;
@@ -781,7 +769,6 @@ onMounted(() => {
   font-size: 12px;
   color: var(--color-text-secondary);
   cursor: help;
-  border-bottom: 1px dashed var(--color-border);
   line-height: 18px;
 }
 .exposure-cell {
@@ -917,5 +904,17 @@ onMounted(() => {
   height: 6px;
   border-radius: 50%;
   flex: none;
+}
+.table-scroll {
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .table-scroll {
+    overflow-x: auto;
+  }
+  .table-scroll :deep(.el-table),
+  .table-scroll :deep(.table-pager) {
+    min-width: 1100px;
+  }
 }
 </style>

@@ -153,10 +153,9 @@ const menus = computed(() => {
 
 async function loadMeta() {
   await Promise.allSettled([app.loadProjects(), dict.load()])
-  const projectId = app.currentProjectId ?? undefined
   const range = lastNDays(30)
   try {
-    const summary = await getDashboardSummary({ projectId, ...range })
+    const summary = await getDashboardSummary({ ...range })
     updatedText.value = summary.dataUpdatedAt
       ? dayjs(summary.dataUpdatedAt).format('MM-DD HH:mm')
       : ''

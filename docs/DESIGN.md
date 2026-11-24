@@ -137,7 +137,7 @@
 - 入口：顶栏月亮/太阳按钮；首次跟随系统，手动切换后写入 `localStorage['adflow.theme']`。
 - 机制：`html[data-theme]` + CSS 变量；Element Plus 变量同步覆盖。
 - 图表：`chartColors()` 在运行时读取 CSS 变量，并通过 App Store 的 `theme` 形成响应式依赖，切换后自动重绘。
-- 截图：见 `docs/theme-shots/*-dark.png`。
+- 截图：见 `theme-shots/*-dark.png`。
 
 ---
 
@@ -153,7 +153,7 @@
 
 ## 7 页面模板与截图
 
-所有截图：`docs/theme-shots/`（1440×900 桌面、390×844 移动）。
+所有截图：`theme-shots/`（1440×900 桌面、390×844 移动）。
 
 | 页面 | 明色 | 暗色 |
 |---|---|---|

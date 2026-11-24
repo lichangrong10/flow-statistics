@@ -46,7 +46,6 @@ defineProps<{
   gap: 8px;
   flex: none;
 }
-</style>
 
 @media (max-width: 720px) {
   .page-header {
@@ -68,3 +67,4 @@ defineProps<{
     overflow: hidden;
   }
 }
+</style>

@@ -133,7 +133,6 @@ import FilterBar from '@/components/FilterBar.vue'
 import KpiCard from '@/components/KpiCard.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import DimensionTabs from '@/components/DimensionTabs.vue'
-import { useAppStore } from '@/stores/app'
 import { getDashboardDimensions, getDashboardSummary, getDashboardTrend } from '@/api/dashboard'
 import { getCampaigns } from '@/api/campaign'
 import type {
@@ -148,7 +147,6 @@ import { abbrNumber, formatNumber, formatPercent } from '@/utils/format'
 import { barOption, chartColors, donutOption, hbarOption, lineOption } from '@/utils/chart'
 import type { EChartsOption } from 'echarts'
 
-const app = useAppStore()
 
 const dateRange = ref<[string, string]>([
   lastNDays(14).from,
@@ -379,8 +377,7 @@ const completionOption = computed<EChartsOption>(() => {
 
 function rangeParams() {
   return {
-    projectId: app.currentProjectId ?? undefined,
-    from: dateRange.value[0],
+      from: dateRange.value[0],
     to: dateRange.value[1],
   }
 }
@@ -427,8 +424,7 @@ async function loadCompletion() {
   loadingCompletion.value = true
   try {
     const data = await getCampaigns({
-      projectId: app.currentProjectId ?? undefined,
-      page: 1,
+          page: 1,
       pageSize: 50,
     })
     completionItems.value = data.items.filter((item) => Number(item.targetImpressions) > 0)
@@ -461,10 +457,6 @@ function onReset() {
 }
 
 watch(trendMetric, loadTrend)
-watch(
-  () => app.currentProjectId,
-  () => loadAll(),
-)
 
 onMounted(loadAll)
 </script>
