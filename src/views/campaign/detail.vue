@@ -56,6 +56,7 @@
             :type="action.primary ? 'primary' : 'default'"
             :plain="action.primary"
             :danger="action.danger"
+            :loading="action.key === 'sync' && syncing"
             @click="onAction(action.key)"
           >
             {{ action.label }}
@@ -432,6 +433,7 @@ const loadingDims = ref(false)
 
 const logs = ref<AuditLog[]>([])
 const loadingLogs = ref(false)
+const syncing = ref(false)
 
 const statEditVisible = ref(false)
 const statEditSaving = ref(false)
@@ -604,7 +606,7 @@ const headerActions = computed(() => {
   if (status === 'finished' && admin) list.push({ key: 'close', label: '生成结案报告', primary: true })
   if (status === 'closed') list.push({ key: 'report', label: '导出报告', primary: true })
   if (['running', 'finished'].includes(status)) {
-    list.push({ key: 'sync', label: '同步数据' })
+    list.push({ key: 'sync', label: syncing.value ? '同步中…' : '同步数据' })
   }
   return list
 })
@@ -740,14 +742,29 @@ async function onAction(key: string) {
       return
     }
     if (key === 'sync') {
-      await ElMessageBox.confirm('将按媒体适配器拉取该计划数据，预计耗时约 3 秒。确认同步？', '同步数据', {
+      if (syncing.value) return
+      await ElMessageBox.confirm('将按媒体适配器拉取该计划数据，预计耗时约 2 秒。确认同步？', '同步数据', {
         confirmButtonText: '开始同步',
         cancelButtonText: '取消',
       })
-      const result = await syncCampaign(id)
-      const added = result.added > 0 ? `，其中新增 ${result.added} 天` : ''
-      ElMessage.success(`同步完成：已同步 ${result.days} 天数据${added}`)
-      await loadDetail()
+      syncing.value = true
+      try {
+        const [result] = await Promise.all([
+          syncCampaign(id),
+          new Promise((resolve) => window.setTimeout(resolve, 2000)),
+        ])
+        if (result.days > 0) {
+          const added = result.added > 0 ? `，其中新增 ${result.added} 天` : ''
+          ElMessage.success(`同步完成：本次更新 ${result.days} 天数据${added}`)
+        } else if (result.message) {
+          ElMessage.warning(result.message)
+        } else {
+          ElMessage.success('同步完成，暂无新增数据')
+        }
+        await loadDetail()
+      } finally {
+        syncing.value = false
+      }
       return
     }
     if (key === 'clear') {

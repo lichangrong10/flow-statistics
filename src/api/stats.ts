@@ -128,16 +128,23 @@ export async function syncCampaign(
   expectedSeconds: number
   days: number
   added: number
+  message: string
 }> {
-  const result = await request<{ id?: string; syncTaskId?: string; days?: number; added?: number }>(
-    'POST',
-    `/campaigns/${id}/sync`,
-  )
+  const result = await request<{
+    id?: string
+    syncTaskId?: string
+    days?: number
+    updatedDays?: number
+    added?: number
+    message?: string
+  }>('POST', `/campaigns/${id}/sync`)
   return {
     syncTaskId: result?.syncTaskId ?? result?.id ?? `sync-${id}-${Date.now()}`,
     expectedSeconds: 2,
-    days: Number(result?.days ?? 0),
+    // 后端 11-24 起把 days 改为 updatedDays；同时兼容旧字段
+    days: Number(result?.updatedDays ?? result?.days ?? 0),
     added: Number(result?.added ?? 0),
+    message: result?.message ?? '',
   }
 }
 
