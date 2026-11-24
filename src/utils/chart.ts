@@ -82,9 +82,9 @@ export function lineOption(xData: string[], series: LineSeriesInput[], unit = ''
     legend: {
       show: series.length > 1,
       bottom: 0,
-      icon: 'rect',
-      itemWidth: 8,
-      itemHeight: 8,
+      icon: 'circle',
+      itemWidth: 9,
+      itemHeight: 9,
       itemGap: 16,
       textStyle: { color: colors.axis, fontSize: 11 },
     },
@@ -156,7 +156,7 @@ export function barOption(
     legend: {
       show: series.length > 1,
       bottom: 0,
-      icon: 'rect',
+      icon: 'circle',
       itemWidth: 8,
       itemHeight: 8,
       textStyle: { color: colors.axis, fontSize: 11 },
@@ -271,11 +271,11 @@ export function donutOption(
       left: 'center',
       bottom: 0,
       top: 'auto',
-      icon: 'rect',
-      itemWidth: 7,
-      itemHeight: 7,
-      itemGap: 12,
-      textStyle: { color: colors.axis, fontSize: 11 },
+      icon: 'circle',
+      itemWidth: 10,
+      itemHeight: 10,
+      itemGap: 14,
+      textStyle: { color: colors.axis, fontSize: 11.5 },
       formatter: (name: string) => {
         const item = items.find((it) => it.name === name)
         if (!item) return name

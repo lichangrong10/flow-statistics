@@ -31,7 +31,7 @@ const ICONS: Record<string, string> = {
 const COLORS: Record<string, string> = {
   "douyin": "currentColor",
   "wechat": "#07C160",
-  "xiaohongshu": "#FF2442",
+  "xiaohongshu": "#FF0033",
   "kuaishou": "#FF4906",
   "baidu": "#2932E1"
 }
@@ -64,7 +64,7 @@ const fallback = computed(() => meta.value.short ?? label.value.slice(0, 1))
 .channel-icon.is-xiaohongshu {
   box-sizing: border-box;
   padding: 2px;
-  background: #ff2442;
+  background: #ff0033;
   border-radius: var(--radius-xs);
 }
 .channel-icon svg {

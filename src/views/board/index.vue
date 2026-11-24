@@ -145,6 +145,7 @@ import type {
 import { lastNDays } from '@/utils/date'
 import { abbrNumber, formatNumber, formatPercent } from '@/utils/format'
 import { barOption, chartColors, donutOption, hbarOption, lineOption } from '@/utils/chart'
+import { CHANNEL_META } from '@/constants'
 import type { EChartsOption } from 'echarts'
 
 
@@ -262,9 +263,14 @@ const trendOption = computed(() => {
 
 const channelOption = computed(() => {
   void chartColors()
-  const items = channels.value.map((item) => ({
+  const palette = chartColors().palette
+  const items = channels.value.map((item, index) => ({
     name: item.dimName,
     value: Number(item.value),
+    color:
+      item.dimKey === 'douyin'
+        ? chartColors().ink
+        : CHANNEL_META[item.dimKey as keyof typeof CHANNEL_META]?.color ?? palette[index],
   }))
   const total = items.reduce((sum, item) => sum + item.value, 0)
   return donutOption(items, {
@@ -502,9 +508,9 @@ onMounted(loadAll)
   color: var(--color-text-tertiary);
 }
 .lg-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   display: inline-block;
 }
 .lg-dot.done {

@@ -162,6 +162,7 @@ import type { CampaignListItem, DashboardSummary, DimensionValue, TrendPoint } f
 import { lastNDays } from '@/utils/date'
 import { abbrNumber, formatNumber, formatPercent } from '@/utils/format'
 import { chartColors, donutOption, lineOption } from '@/utils/chart'
+import { CHANNEL_META } from '@/constants'
 
 const router = useRouter()
 
@@ -300,9 +301,14 @@ const trendOption = computed(() => {
 
 const channelOption = computed(() => {
   void chartColors()
-  const items = channelItems.value.map((item) => ({
+  const palette = chartColors().palette
+  const items = channelItems.value.map((item, index) => ({
     name: item.dimName,
     value: Number(item.value),
+    color:
+      item.dimKey === 'douyin'
+        ? chartColors().ink
+        : CHANNEL_META[item.dimKey as keyof typeof CHANNEL_META]?.color ?? palette[index],
   }))
   const total = items.reduce((sum, item) => sum + item.value, 0)
   return donutOption(items, {

@@ -31,10 +31,10 @@ export const CHANNEL_META: Record<
   { label: string; short: string; color: string; soft: string }
 > = {
   douyin: { label: '抖音', short: '抖', color: '#161823', soft: '#EDEDEF' },
-  wechat: { label: '微信', short: '微', color: '#0C9D58', soft: '#E7F6EE' },
+  wechat: { label: '微信', short: '微', color: '#07C160', soft: '#E7F6EE' },
   xiaohongshu: { label: '小红书', short: '红', color: '#E8324A', soft: '#FDECEF' },
-  kuaishou: { label: '快手', short: '快', color: '#E5480A', soft: '#FDECE6' },
-  baidu: { label: '百度', short: '百', color: '#2B43C9', soft: '#EBEEFC' },
+  kuaishou: { label: '快手', short: '快', color: '#FF4906', soft: '#FDECE6' },
+  baidu: { label: '百度', short: '百', color: '#2932E1', soft: '#EBEEFC' },
 }
 
 export const CHANNEL_OPTIONS = (Object.keys(CHANNEL_META) as ChannelCode[]).map((key) => ({
