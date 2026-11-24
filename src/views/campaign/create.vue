@@ -1273,4 +1273,54 @@ onMounted(async () => {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+@media (max-width: 720px) {
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 14px 12px;
+    gap: 8px 4px;
+  }
+  .step {
+    min-width: 0;
+    gap: 6px;
+    padding-right: 0;
+  }
+  .step-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .step-index {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  .step-title {
+    font-size: 11.5px;
+  }
+  .step-desc,
+  .step-line {
+    display: none;
+  }
+  .step-body {
+    padding: 16px 16px 0;
+  }
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .span-2 {
+    grid-column: span 1;
+  }
+  .channel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .goal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wizard-foot {
+    padding: 12px 16px;
+  }
+  .foot-right {
+    gap: 10px;
+  }
+}
 </style>

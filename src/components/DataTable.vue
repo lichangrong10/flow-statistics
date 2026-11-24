@@ -3,7 +3,8 @@
     <div v-if="$slots.toolbar" class="table-toolbar">
       <slot name="toolbar" />
     </div>
-    <el-table
+    <div class="table-scroll">
+      <el-table
       :data="data"
       :row-key="rowKey"
       v-loading="loading"
@@ -43,7 +44,8 @@
           />
         </slot>
       </template>
-    </el-table>
+      </el-table>
+    </div>
 
     <div v-if="showPager" class="table-pager">
       <el-pagination
@@ -137,6 +139,15 @@ function onSizeChange(value: number) {
 </script>
 
 <style scoped>
+.table-scroll {
+  min-width: 0;
+  overflow-x: auto;
+}
+@media (max-width: 1279px) {
+  .table-scroll :deep(.el-table) {
+    min-width: 980px;
+  }
+}
 .table-toolbar {
   display: flex;
   align-items: center;

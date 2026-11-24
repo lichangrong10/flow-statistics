@@ -470,7 +470,7 @@ const statColumns: TableColumn[] = [
   { prop: 'cost', label: '消耗', width: 120, align: 'right', slot: 'cost' },
   { prop: 'source', label: '来源', width: 90, slot: 'source' },
   { prop: 'updatedAt', label: '更新时间', width: 158, slot: 'updated' },
-  { prop: 'actions', label: '操作', width: 84, fixed: 'right', slot: 'actions' },
+  { prop: 'actions', label: '操作', width: 90, align: 'center', slot: 'actions' },
 ]
 
 const dimensionColumns: TableColumn[] = [

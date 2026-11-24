@@ -77,4 +77,12 @@ const tabs = [
   align-items: center;
   gap: 6px;
 }
+@media (max-width: 1279px) {
+  .admin-tabs :deep(.el-tabs__content) {
+    overflow-x: auto;
+  }
+  .admin-tabs :deep(.el-table) {
+    min-width: 1120px;
+  }
+}
 </style>

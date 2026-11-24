@@ -205,7 +205,7 @@ const columns: TableColumn[] = [
   { prop: 'status', label: '状态', width: 90, slot: 'status' },
   { prop: 'createdAt', label: '创建时间', width: 140, slot: 'createdAt' },
   { prop: 'fileName', label: '文件', minWidth: 240, slot: 'fileName' },
-  { prop: 'actions', label: '操作', width: 90, fixed: 'right', slot: 'actions' },
+  { prop: 'actions', label: '操作', width: 90, align: 'center', slot: 'actions' },
 ]
 
 function typeLabel(type: string): string {

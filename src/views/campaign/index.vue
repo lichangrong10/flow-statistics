@@ -116,7 +116,6 @@
         </button>
       </div>
 
-      <div class="table-scroll">
         <DataTable
           :columns="columns"
           :data="rows as unknown as Record<string, unknown>[]"
@@ -228,7 +227,6 @@
       </DataTable>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -321,7 +319,7 @@ const columns: TableColumn[] = [
   { prop: 'startDate', label: '排期', minWidth: 170, align: 'center', slot: 'schedule' },
   { prop: 'impressions', label: '曝光量（实际 / 计划）', minWidth: 150, align: 'center', slot: 'exposure' },
   { prop: 'completionRate', label: '完成率', minWidth: 84, align: 'center', slot: 'completion' },
-  { prop: 'actions', label: '操作', width: 166, fixed: 'right', align: 'center', slot: 'actions' },
+  { prop: 'actions', label: '操作', width: 166, align: 'center', slot: 'actions' },
 ]
 
 function str(value: unknown): string {
@@ -850,18 +848,6 @@ onMounted(() => {
   border-radius: 50%;
   flex: none;
 }
-.table-scroll {
-  min-width: 0;
-}
-@media (max-width: 900px) {
-  .table-scroll {
-    overflow-x: auto;
-  }
-  .table-scroll :deep(.el-table),
-  .table-scroll :deep(.table-pager) {
-    min-width: 1100px;
-  }
-}
 .status-cell {
   display: inline-flex;
   align-items: center;
@@ -872,5 +858,8 @@ onMounted(() => {
   font-size: 14px;
   color: var(--color-text-tertiary);
   cursor: help;
+}
+.list-card :deep(.el-table) {
+  min-width: 1100px;
 }
 </style>
