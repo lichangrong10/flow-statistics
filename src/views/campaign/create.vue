@@ -351,7 +351,7 @@
               <el-icon><ArrowRight /></el-icon>
             </el-button>
             <el-button v-else type="primary" :loading="submitting" @click="submit">
-              确认发布
+              {{ isFutureStart ? '确认排期' : '确认发布' }}
             </el-button>
           </div>
         </div>
@@ -409,7 +409,7 @@
         <div class="summary-tip">
           <el-icon><InfoFilled /></el-icon>
           <span>
-            提交后立即生成投放单号并开始投放。
+            {{ isFutureStart ? '开始日期未到：提交后进入已排期，到开始日期自动发布。' : '提交后立即生成投放单号并开始投放。' }}
           </span>
         </div>
       </aside>
@@ -489,6 +489,8 @@ const form = reactive({
   publishMode: 'publish' as 'submit' | 'publish' | 'draft',
   remark: '',
 })
+
+const isFutureStart = computed(() => form.startDate > today())
 
 const pageTitle = computed(() =>
   mode.value === 'edit' ? '编辑投放计划' : mode.value === 'copy' ? '复制为新计划' : '发布投流',
@@ -744,7 +746,7 @@ async function submit() {
   submitting.value = true
   try {
     const result = await persist('publish')
-    ElMessage.success('发布成功，已生成投放单号并开始投放')
+    ElMessage.success(isFutureStart.value ? '计划已排期，将在开始日期自动发布' : '发布成功，已生成投放单号并开始投放')
     const highlight = result?.ids?.[0]
     router.push(highlight ? `/campaign?highlight=${highlight}` : '/campaign')
   } catch (error) {

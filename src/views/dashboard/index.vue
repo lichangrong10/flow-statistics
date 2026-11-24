@@ -68,49 +68,6 @@
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-title">待审核计划</div>
-            <div class="card-sub">审核通过后进入已排期，可发布上线</div>
-          </div>
-          <el-button text type="primary" @click="go('/campaign?status=pending')">
-            查看全部
-          </el-button>
-        </div>
-        <div class="card-body">
-          <div v-if="loadingPending" class="skeleton-rows">
-            <div v-for="index in 3" :key="index" class="skeleton" style="height: 44px" />
-          </div>
-          <EmptyState v-else-if="!pending.length" type="no-data" title="暂无待审核计划" />
-          <div v-else class="pending-list">
-            <div
-              v-for="item in pending"
-              :key="item.id"
-              class="pending-item"
-              @click="go(`/campaign/${item.id}`)"
-            >
-              <div class="pi-main">
-                <div class="pi-name">{{ item.name }}</div>
-                <div class="pi-meta">
-                  <ChannelTag :channel="item.channel" />
-                  <template v-if="item.ownerName">
-                    <span class="dot-sep">·</span>
-                    {{ item.ownerName }}
-                  </template>
-                  <span class="dot-sep">·</span>
-                  目标 {{ abbrNumber(item.targetImpressions) }}
-                </div>
-              </div>
-              <div class="pi-right">
-                <StatusTag :status="item.status" size="small" />
-                <span class="pi-time">{{ shortTime(item.updatedAt) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div>
             <div class="card-title">最近更新数据</div>
             <div class="card-sub">按计划数据更新时间排序</div>
           </div>
@@ -153,8 +110,6 @@ import PageHeader from '@/components/PageHeader.vue'
 import KpiCard from '@/components/KpiCard.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import DimensionTabs from '@/components/DimensionTabs.vue'
-import StatusTag from '@/components/StatusTag.vue'
-import ChannelTag from '@/components/ChannelTag.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import { getDashboardDimensions, getDashboardSummary, getDashboardTrend } from '@/api/dashboard'
 import { getCampaigns } from '@/api/campaign'
@@ -172,13 +127,11 @@ const trendMetric = ref('impressions')
 const summary = ref<DashboardSummary | null>(null)
 const trend = ref<TrendPoint[]>([])
 const channelItems = ref<DimensionValue[]>([])
-const pending = ref<CampaignListItem[]>([])
 const recent = ref<CampaignListItem[]>([])
 
 const loadingSummary = ref(true)
 const loadingTrend = ref(true)
 const loadingChannel = ref(true)
-const loadingPending = ref(true)
 const loadingRecent = ref(true)
 
 const projectName = computed(() => '全部项目')
@@ -360,21 +313,14 @@ async function loadSummaryAndTrend() {
 }
 
 async function loadLists() {
-  loadingPending.value = true
   loadingRecent.value = true
   try {
-    const [pendingData, recentData] = await Promise.all([
-      getCampaigns({ status: 'pending', page: 1, pageSize: 4 }),
-      getCampaigns({ page: 1, pageSize: 5 }),
-    ])
-    pending.value = pendingData.items
+    const recentData = await getCampaigns({ page: 1, pageSize: 5 })
     recent.value = recentData.items.filter((item) => Number(item.impressions) > 0)
     if (!recent.value.length) recent.value = recentData.items.slice(0, 4)
   } catch {
-    pending.value = []
     recent.value = []
   } finally {
-    loadingPending.value = false
     loadingRecent.value = false
   }
 }
@@ -404,7 +350,7 @@ onMounted(loadAll)
 }
 .bottom-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 .legend-note {
@@ -416,61 +362,9 @@ onMounted(loadAll)
   flex-direction: column;
   gap: 10px;
 }
-.pending-list,
 .update-list {
   display: flex;
   flex-direction: column;
-}
-.pending-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 10px;
-  margin: 0 -10px;
-  border-bottom: 1px solid #f0f3f8;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-.pending-item:last-child {
-  border-bottom: none;
-}
-.pending-item:hover {
-  background: var(--color-primary-soft);
-}
-.pi-main {
-  min-width: 0;
-}
-.pi-name {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--color-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.pi-meta {
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-}
-.dot-sep {
-  color: #c8d1db;
-}
-.pi-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: none;
-}
-.pi-time {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-  font-variant-numeric: tabular-nums;
 }
 .update-item {
   display: flex;

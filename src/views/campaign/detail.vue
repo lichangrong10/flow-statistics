@@ -50,6 +50,9 @@
           </div>
         </div>
         <div class="head-actions">
+          <el-tooltip v-if="detail.status === 'scheduled'" content="到期自动发布" placement="bottom">
+            <el-icon class="auto-clock"><Clock /></el-icon>
+          </el-tooltip>
           <el-button
             v-for="action in headerActions"
             :key="action.key"
@@ -361,7 +364,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft, InfoFilled, Refresh } from '@element-plus/icons-vue'
+import { ArrowLeft, Clock, InfoFilled, Refresh } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import PageHeader from '@/components/PageHeader.vue'
 import KpiCard from '@/components/KpiCard.vue'
@@ -378,7 +381,6 @@ import {
   finishCampaign,
   getCampaign,
   pauseCampaign,
-  publishCampaign,
   resumeCampaign,
 } from '@/api/campaign'
 import {
@@ -597,7 +599,6 @@ const headerActions = computed(() => {
   const status = detail.value.status
   const list: { key: string; label: string; primary?: boolean; danger?: boolean }[] = []
   if (status === 'draft') list.push({ key: 'edit', label: '编辑' })
-  if (status === 'scheduled' && admin) list.push({ key: 'publish', label: '立即发布', primary: true })
   if (status === 'running' && admin) list.push({ key: 'pause', label: '暂停投放' })
   if (status === 'paused' && admin) {
     list.push({ key: 'resume', label: '恢复投放', primary: true })
@@ -775,16 +776,6 @@ async function onAction(key: string) {
       )
       const result = await clearMockData(id)
       ElMessage.success(`已清空 ${result.deletedDays} 天数据`)
-      await loadDetail()
-      return
-    }
-    if (key === 'publish') {
-      await ElMessageBox.confirm('发布后生成投放单号并按排期开始投放，确认继续？', '发布计划', {
-        confirmButtonText: '立即发布',
-        cancelButtonText: '取消',
-      })
-      const result = await publishCampaign(id)
-      ElMessage.success(`发布成功，投放单号 ${result.code}`)
       await loadDetail()
       return
     }
@@ -1408,5 +1399,10 @@ onMounted(loadDetail)
   .mock-layout {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+.auto-clock {
+  font-size: 15px;
+  color: var(--color-text-tertiary);
+  cursor: help;
 }
 </style>

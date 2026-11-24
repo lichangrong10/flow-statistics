@@ -23,7 +23,6 @@ export const PLATFORM_TAG_TYPES: Record<PlatformCode, TagType> = {
 
 export const CAMPAIGN_STATUS_META: Record<CampaignStatus, { label: string; type: TagType }> = {
   draft: { label: '草稿', type: 'info' },
-  pending: { label: '待审核', type: 'warning' },
   scheduled: { label: '已排期', type: 'primary' },
   running: { label: '投放中', type: 'success' },
   paused: { label: '已暂停', type: 'warning' },
@@ -36,7 +35,7 @@ export const LOG_TARGET_META: Record<LogTargetType, { label: string; type: TagTy
   vendor: { label: '厂商', type: 'success' },
   campaign: { label: '投放计划', type: 'primary' },
   project: { label: '项目', type: 'info' },
-  mock: { label: '模拟数据', type: 'warning' },
+  mock: { label: '系统数据', type: 'warning' },
   dict: { label: '字典', type: 'info' },
   auth: { label: '登录', type: 'info' }
 };
@@ -46,7 +45,6 @@ export const LOG_TARGET_OPTIONS: { value: LogTargetType; label: string }[] = [
   { value: 'vendor', label: '厂商' },
   { value: 'campaign', label: '投放计划' },
   { value: 'project', label: '项目' },
-  { value: 'mock', label: '模拟数据' },
   { value: 'dict', label: '字典' },
   { value: 'auth', label: '登录' }
 ];

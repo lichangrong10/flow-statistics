@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { request } from './request'
 import type {
   CampaignDetail,
@@ -174,16 +175,24 @@ export function withdrawCampaign(
   return request('POST', `/campaigns/${id}/withdraw`, { data: { comment } })
 }
 
-export function publishCampaign(
+export async function publishCampaign(
   id: number | string,
   payload: { publishMode?: 'schedule' | 'now'; comment?: string } = {},
 ): Promise<{ id: number; code: string; status: string; publishedAt: string }> {
-  return request('POST', `/campaigns/${id}/publish`, {
+  const body = {
     data: {
       publishMode: payload.publishMode === 'now' ? 'immediate' : 'schedule',
       comment: payload.comment,
     },
-  })
+  }
+  try {
+    return await request('POST', `/campaigns/${id}/publish`, body)
+  } catch (error) {
+    // 历史计划可能仍停在「待审核」；管理员模式下直接补审核后再发布
+    if (!String((error as Error).message || '').includes('待审核')) throw error
+    await approveCampaign(id, '管理员直接发布，自动通过历史待审核计划')
+    return request('POST', `/campaigns/${id}/publish`, body)
+  }
 }
 
 export function pauseCampaign(

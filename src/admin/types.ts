@@ -44,7 +44,7 @@ export interface Project {
   remainingBudget: string;
 }
 
-export type CampaignStatus = 'draft' | 'pending' | 'scheduled' | 'running' | 'paused' | 'finished' | 'closed';
+export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'paused' | 'finished' | 'closed';
 
 export interface Campaign {
   id: number;

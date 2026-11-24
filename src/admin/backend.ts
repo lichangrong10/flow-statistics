@@ -393,8 +393,8 @@ const ACTION_LABELS: Record<string, string> = {
   update: '更新',
   delete: '删除',
   set_vendors: '关联厂商',
-  save_mock_profile: '保存模拟参数',
-  mock_generate: '生成模拟数据',
+  save_mock_profile: '更新投放参数',
+  mock_generate: '生成数据',
   publish: '发布计划',
   approve: '审核通过',
   reject: '审核驳回',
@@ -594,7 +594,6 @@ interface BackendCampaign {
 
 const CAMPAIGN_STATUSES: CampaignStatus[] = [
   'draft',
-  'pending',
   'scheduled',
   'running',
   'paused',

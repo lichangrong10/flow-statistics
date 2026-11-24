@@ -12,7 +12,6 @@ export const STATUS_META: Record<
   { label: string; color: string; bg: string; border: string }
 > = {
   draft: { label: '草稿', color: '#5B6673', bg: '#F2F4F7', border: '#E3E7ED' },
-  pending: { label: '待审核', color: '#C77C0E', bg: '#FCF3E2', border: '#F3E1BE' },
   scheduled: { label: '已排期', color: '#2E6DA4', bg: '#EAF2FA', border: '#CFE0F1' },
   running: { label: '投放中', color: '#1F8A5B', bg: '#E9F6F0', border: '#C9E8DA' },
   paused: { label: '已暂停', color: '#B4711F', bg: '#FDF1E1', border: '#F3DFC2' },

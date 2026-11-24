@@ -18,7 +18,6 @@ export type Role = 'admin' | 'user'
 
 export type CampaignStatus =
   | 'draft'
-  | 'pending'
   | 'scheduled'
   | 'running'
   | 'paused'

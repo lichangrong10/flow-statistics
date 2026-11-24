@@ -57,7 +57,7 @@ export interface RealCampaign {
   channel: ChannelCode
   channelName?: string
   objective: CampaignGoal
-  status: CampaignStatus
+  status: CampaignStatus | 'pending'
   budget: string
   dailyBudget?: string | null
   bidType?: 'cpm' | 'cpc' | null
@@ -353,7 +353,7 @@ export function mapCampaignListItem(campaign: RealCampaign): CampaignListItem {
       name: vendor.name,
       code: vendor.code,
     })),
-    status: campaign.status,
+    status: campaign.status === 'pending' ? 'scheduled' : campaign.status,
     startDate: campaign.startDate,
     endDate: campaign.endDate,
     dayIndex: campaign.status === 'running' ? dayIndex(campaign.startDate) : null,

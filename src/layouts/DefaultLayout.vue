@@ -112,7 +112,6 @@ import dayjs from 'dayjs'
 import { useAppStore } from '@/stores/app'
 import { useDictStore } from '@/stores/dict'
 import { useUserStore } from '@/stores/user'
-import { getCampaigns } from '@/api/campaign'
 import { getDashboardSummary } from '@/api/dashboard'
 import { lastNDays } from '@/utils/date'
 import { APP_VERSION } from '@/constants'
@@ -126,7 +125,6 @@ const dict = useDictStore()
 const collapsed = computed(() => app.sidebarCollapsed)
 const version = APP_VERSION
 const updatedText = ref('')
-const pendingCount = ref(0)
 
 const pageTitle = computed(() => (route.meta.title as string) ?? '工作台')
 const activeMenu = computed(() => (route.meta.activeMenu as string) ?? (route.name as string))
@@ -139,7 +137,7 @@ const menus = computed(() => {
       path: '/campaign',
       label: '投放计划',
       icon: List,
-      badge: pendingCount.value,
+      badge: 0,
     },
     { key: 'stats', path: '/stats', label: '数据回收', icon: DataAnalysis, badge: 0 },
     { key: 'board', path: '/board', label: '数据看板', icon: PieChart, badge: 0 },
@@ -161,12 +159,6 @@ async function loadMeta() {
       : ''
   } catch {
     updatedText.value = ''
-  }
-  try {
-    const pending = await getCampaigns({ status: 'pending', page: 1, pageSize: 1 })
-    pendingCount.value = pending.total
-  } catch {
-    pendingCount.value = 0
   }
 }
 

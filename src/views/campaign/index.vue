@@ -173,7 +173,16 @@
             </template>
 
         <template #status="{ row }">
-          <StatusTag :status="(row as unknown as CampaignListItem).status" />
+          <span class="status-cell">
+            <StatusTag :status="(row as unknown as CampaignListItem).status" />
+            <el-tooltip
+              v-if="row.status === 'scheduled'"
+              content="到期自动发布"
+              placement="top"
+            >
+              <el-icon class="auto-clock"><Clock /></el-icon>
+            </el-tooltip>
+          </span>
         </template>
 
         <template #schedule="{ row }">
@@ -226,7 +235,7 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh } from '@element-plus/icons-vue'
+import { Clock, Plus, Refresh } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import DataTable from '@/components/DataTable.vue'
@@ -236,17 +245,12 @@ import VendorTags from '@/components/VendorTags.vue'
 import { useDictStore } from '@/stores/dict'
 import { useUserStore } from '@/stores/user'
 import {
-  approveCampaign,
   closeCampaign,
   deleteCampaign,
   finishCampaign,
   getCampaigns,
   pauseCampaign,
-  publishCampaign,
-  rejectCampaign,
   resumeCampaign,
-  submitCampaign,
-  withdrawCampaign,
 } from '@/api/campaign'
 import { createReportTask } from '@/api/report'
 import type { CampaignListItem, CampaignStatus, ChannelCode, TableColumn } from '@/types'
@@ -311,7 +315,7 @@ const canArchive = computed(
 
 const columns: TableColumn[] = [
   { prop: 'name', label: '计划', width: 220, align: 'center', slot: 'name' },
-  { prop: 'status', label: '状态', minWidth: 90, align: 'center', slot: 'status' },
+  { prop: 'status', label: '状态', minWidth: 104, align: 'center', slot: 'status' },
   { prop: 'channel', label: '渠道', minWidth: 84, align: 'center', slot: 'channel' },
   { prop: 'vendors', label: '厂商', minWidth: 54, align: 'center', slot: 'vendors' },
   { prop: 'startDate', label: '排期', minWidth: 170, align: 'center', slot: 'schedule' },
@@ -448,24 +452,11 @@ function actionsFor(row: CampaignListItem): RowAction[] {
     case 'draft':
       return [
         ...(can('campaign:update') ? [{ key: 'edit', label: '编辑' }] : []),
-        ...(can('campaign:submit') ? [{ key: 'submit', label: '提交审核' }] : []),
         ...(admin ? [{ key: 'delete', label: '删除', danger: true }] : []),
-      ]
-    case 'pending':
-      return [
-        { key: 'view', label: '查看' },
-        ...(!admin ? [{ key: 'withdraw', label: '撤回' }] : []),
-        ...(admin
-          ? [
-              { key: 'approve', label: '通过' },
-              { key: 'reject', label: '驳回', danger: true },
-            ]
-          : []),
       ]
     case 'scheduled':
       return [
         { key: 'view', label: '查看' },
-        ...(admin ? [{ key: 'publish', label: '发布' }] : []),
         { key: 'copy', label: '复制' },
       ]
     case 'running':
@@ -522,52 +513,6 @@ async function onAction(key: string, row: CampaignListItem) {
       case 'report':
         router.push(`/report?campaignId=${row.id}`)
         return
-      case 'submit': {
-        await ElMessageBox.confirm(
-          '提交后将进入待审核状态，审核通过前不可编辑。确认提交？',
-          '提交审核',
-          { confirmButtonText: '提交', cancelButtonText: '取消' },
-        )
-        await submitCampaign(row.id)
-        await refreshAfter('已提交审核，预计一个工作日内完成')
-        return
-      }
-      case 'withdraw': {
-        await ElMessageBox.confirm('撤回后计划回到草稿状态，可继续编辑。确认撤回？', '撤回申请', {
-          confirmButtonText: '撤回',
-          cancelButtonText: '取消',
-          type: 'warning',
-        })
-        await withdrawCampaign(row.id)
-        await refreshAfter('已撤回申请')
-        return
-      }
-      case 'approve': {
-        await approveCampaign(row.id)
-        await refreshAfter('审核通过，计划已进入已排期')
-        return
-      }
-      case 'reject': {
-        const result = await ElMessageBox.prompt('请填写驳回原因，将同步给计划创建人', '驳回计划', {
-          confirmButtonText: '确认驳回',
-          cancelButtonText: '取消',
-          inputPlaceholder: '例如：预算与项目阶段不匹配，请调整后重新提交',
-          inputValidator: (value: string) => (value?.trim() ? true : '驳回原因不能为空'),
-        })
-        await rejectCampaign(row.id, result.value)
-        await refreshAfter('已驳回，计划回到草稿状态')
-        return
-      }
-      case 'publish': {
-        await ElMessageBox.confirm(
-          `确认立即发布「${row.name}」？发布后生成投放单号并开始按排期投放。`,
-          '发布计划',
-          { confirmButtonText: '立即发布', cancelButtonText: '取消' },
-        )
-        const result = await publishCampaign(row.id)
-        await refreshAfter(`发布成功，投放单号 ${result.code}`)
-        return
-      }
       case 'pause': {
         await ElMessageBox.confirm('暂停后当日投放停止，媒体侧已消耗部分不可撤回。确认暂停？', '暂停投放', {
           confirmButtonText: '暂停',
@@ -916,5 +861,16 @@ onMounted(() => {
   .table-scroll :deep(.table-pager) {
     min-width: 1100px;
   }
+}
+.status-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.auto-clock {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  cursor: help;
 }
 </style>
