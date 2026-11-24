@@ -1197,13 +1197,13 @@ onMounted(loadDetail)
   background: var(--ink-50);
 }
 .legend-block.level-1 {
-  background: var(--color-border);
+  background: var(--ink-100);
 }
 .legend-block.level-2 {
-  background: #8fb3d3;
+  background: var(--ink-300);
 }
 .legend-block.level-3 {
-  background: var(--signal-info);
+  background: var(--ink-800);
 }
 .calendar-grid {
   display: grid;
@@ -1236,11 +1236,11 @@ onMounted(loadDetail)
   color: var(--color-text-tertiary);
 }
 .calendar-cell.level-1 {
-  background: var(--ink-75);
+  background: var(--ink-100);
   color: var(--color-text-secondary);
 }
 .calendar-cell.level-2 {
-  background: var(--ink-200);
+  background: var(--ink-300);
   color: var(--color-text);
 }
 .calendar-cell.level-3 {
