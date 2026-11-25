@@ -50,6 +50,9 @@ export const useAppStore = defineStore('app', {
     },
     async loadProjects() {
       if (this.projects.length) return
+      await this.refreshProjects()
+    },
+    async refreshProjects() {
       this.projectLoading = true
       try {
         const result = await getProjects()

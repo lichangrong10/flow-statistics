@@ -246,13 +246,17 @@
                 <label>目标曝光量（次） <i>*</i></label>
                 <el-input-number
                   v-model="form.targetImpressions"
-                  :min="1000"
+                  :min="MIN_TARGET_IMPRESSIONS"
+                  :max="targetMax"
                   :step="10000"
+                  :precision="0"
                   :controls="false"
                   style="width: 100%"
                 />
                 <p v-if="errors.targetImpressions" class="err">{{ errors.targetImpressions }}</p>
-                <p v-else class="hint">按千人曝光成本 12 元估算，参考消耗约 {{ formatAmount(referenceCost) }}</p>
+                <p v-else class="hint">
+                  可填 {{ formatNumber(MIN_TARGET_IMPRESSIONS) }}–{{ formatNumber(targetMax) }} 次；按千人曝光成本 12 元估算，参考消耗约 {{ formatAmount(referenceCost) }}
+                </p>
               </div>
               <div class="form-item">
                 <label>出价方式 <i>*</i></label>
@@ -544,6 +548,17 @@ const planDays = computed(() => {
   const span = eachDate(form.startDate, form.endDate).length
   return span > 0 ? span : 0
 })
+const MIN_TARGET_IMPRESSIONS = 1_000
+const MAX_TARGET_IMPRESSIONS = 100_000_000
+/** 按千人曝光成本 12 元估算，目标曝光量不能超过总预算可覆盖的范围 */
+const targetMax = computed(() => {
+  const total = Number(form.totalBudget)
+  if (!Number.isFinite(total) || total <= 0) return MAX_TARGET_IMPRESSIONS
+  return Math.min(
+    MAX_TARGET_IMPRESSIONS,
+    Math.max(MIN_TARGET_IMPRESSIONS, Math.floor((total / 12) * 1000)),
+  )
+})
 const referenceCost = computed(() => (Number(form.targetImpressions) / 1000) * 12)
 
 const goalLabel = computed(
@@ -647,8 +662,13 @@ function validateStep(step: number): boolean {
     else if (total > remainingBudget.value) {
       errors.totalBudget = `超出项目剩余预算，剩余可用金额为 ${formatAmount(remainingBudget.value)}`
     }
-    if (!Number(form.targetImpressions) || Number(form.targetImpressions) <= 0) {
-      errors.targetImpressions = '目标曝光量必须大于零'
+    const target = Number(form.targetImpressions)
+    if (!Number.isInteger(target) || target < MIN_TARGET_IMPRESSIONS) {
+      errors.targetImpressions = `目标曝光量不能低于 ${formatNumber(MIN_TARGET_IMPRESSIONS)} 次`
+    } else if (target > MAX_TARGET_IMPRESSIONS) {
+      errors.targetImpressions = `目标曝光量不能超过 ${formatNumber(MAX_TARGET_IMPRESSIONS)} 次`
+    } else if (target > targetMax.value) {
+      errors.targetImpressions = `按当前总预算，目标曝光量最多 ${formatNumber(targetMax.value)} 次（千人曝光成本按 12 元估算）`
     }
   }
   if (step === 4) {

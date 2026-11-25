@@ -322,6 +322,7 @@ export function mapProject(project: RealProject, usedBudget = 0): Project {
     totalBudget: str(project.budget, '0.00'),
     usedBudget: used.toFixed(2),
     remainingBudget: remaining,
+    createdAt: project.createdAt ?? '',
     status: 'active',
   }
 }

@@ -52,6 +52,7 @@ export interface Project {
   totalBudget: string
   usedBudget: string
   remainingBudget?: string
+  createdAt: string
   status: 'active' | 'closed'
 }
 
