@@ -77,6 +77,8 @@ export async function getDashboardDimensions(
     dimName: item.dimName,
     value: item.impressions,
     ratio: item.ratio,
+    reach: item.reach,
+    clicks: item.clicks,
   }))
   return { items, total: items.length, page: 1, pageSize: items.length || 1 }
 }

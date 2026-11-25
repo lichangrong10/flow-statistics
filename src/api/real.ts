@@ -463,6 +463,7 @@ export function mapSummary(summary: RealSummary): DashboardSummary {
         ? null
         : String(summary.completionRate),
     reach: str(summary.reach),
+    clicks: str(summary.clicks),
     clickRate:
       summary.clickRate === null || summary.clickRate === undefined
         ? ''
@@ -479,6 +480,7 @@ export function mapSummary(summary: RealSummary): DashboardSummary {
               ? null
               : String(summary.compare.completionRate),
           reach: str(summary.compare.reach),
+          clicks: summary.compare.clicks === undefined ? undefined : str(summary.compare.clicks),
           clickRate:
             summary.compare.clickRate === null ||
             summary.compare.clickRate === undefined

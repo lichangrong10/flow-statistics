@@ -242,6 +242,7 @@ export interface DashboardSummary {
   impressions: string
   completionRate: string | null
   reach: string
+  clicks: string
   clickRate: string
   runningCampaigns: number
   dataUpdatedAt: string
@@ -250,6 +251,7 @@ export interface DashboardSummary {
     impressions: string
     completionRate: string | null
     reach: string
+    clicks?: string
     clickRate: string
     runningCampaigns: number
     cost?: string
@@ -269,6 +271,8 @@ export interface DimensionValue {
   dimName: string
   value: string
   ratio: string
+  reach?: string
+  clicks?: string
 }
 
 export interface DictBundle {
