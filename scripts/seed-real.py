@@ -3,7 +3,7 @@
 用法：
     python scripts/seed-real.py
 
-依赖：后端 http://192.168.9.224:3000 可访问，管理员 root/root。
+依赖：后端 http://192.168.9.224:3000 可访问，管理员 admin/Admin123#。
 执行内容：
 1. 登录并创建演示项目、6 家厂商（已存在则复用）
 2. 创建 9 条计划（已存在则跳过），推进到 7 种状态
@@ -232,7 +232,7 @@ def generate(plan: dict, profile: tuple[float, float, float, int], start: str, e
 
 def main() -> None:
     global TOKEN
-    status, payload = call("POST", "/auth/login", {"username": "root", "password": "root"})
+    status, payload = call("POST", "/auth/login", {"username": "admin", "password": "Admin123#"})
     TOKEN = payload["data"]["token"]
     print("登录成功:", payload["data"]["user"]["displayName"])
 

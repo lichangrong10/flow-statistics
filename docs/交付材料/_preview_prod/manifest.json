@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "backend": "native",
+  "rasterEngine": "libreoffice",
+  "source": "saved",
+  "inputPath": "E:\\投流统计平台\\docs\\交付材料\\投流统计平台-技术方案-合并版.docx",
+  "sourceSha256": "ba506be7195c60865d940e91263479e512325ab6621b28d0bd59ace63a0cf8f3",
+  "dpi": 110,
+  "pageCount": 13,
+  "images": [
+    {
+      "index": 1,
+      "page": 1,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0001.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 28842
+    },
+    {
+      "index": 2,
+      "page": 2,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0002.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 21542
+    },
+    {
+      "index": 3,
+      "page": 3,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0003.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 53322
+    },
+    {
+      "index": 4,
+      "page": 4,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0004.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 62424
+    },
+    {
+      "index": 5,
+      "page": 5,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0005.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 63659
+    },
+    {
+      "index": 6,
+      "page": 6,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0006.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 60229
+    },
+    {
+      "index": 7,
+      "page": 7,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0007.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 70203
+    },
+    {
+      "index": 8,
+      "page": 8,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0008.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 78624
+    },
+    {
+      "index": 9,
+      "page": 9,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0009.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 58316
+    },
+    {
+      "index": 10,
+      "page": 10,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0010.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 68393
+    },
+    {
+      "index": 11,
+      "page": 11,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0011.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 64611
+    },
+    {
+      "index": 12,
+      "page": 12,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0012.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 65096
+    },
+    {
+      "index": 13,
+      "page": 13,
+      "path": "E:\\投流统计平台\\docs\\交付材料\\_preview_prod\\page-0013.png",
+      "width": 910,
+      "height": 1287,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 793.7333333333333,
+        "height": 1122.5333333333333
+      },
+      "byteLength": 58384
+    }
+  ],
+  "missingFonts": [
+    "Courier"
+  ]
+}
